@@ -10,11 +10,7 @@
 - Thomas Brunner (BAW-IKT)
 - Peter Strauss (BAW-IKT)
 
-**License:** [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)
-
 ---
-
-> **Language Selection / Sprachauswahl:** **English (current)** | [Deutsche Version](Manual_de.md)
 
 ---
 
@@ -631,4 +627,5 @@ Additional parameters for overview and detailed erosion mapping.
 
 ---
 
-*© 2024-2026 BAW Research | [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)*
+
+
