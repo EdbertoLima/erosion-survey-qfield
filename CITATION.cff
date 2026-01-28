@@ -1,0 +1,44 @@
+cff-version: 1.2.0
+message: "If you use this manual, please cite it as below."
+
+title: "QField Manual: DWA-M-921 Erosion Survey"
+subtitle: "Field Guide for Soil Erosion Mapping"
+
+authors:
+  - name: "Edberto Moura Lima"
+    orcid: "https://orcid.org/0000-0002-8447-8460"
+    affiliation: "BAW Research"
+    email: "edberto.mouralima@baw.at"
+    roles:
+      - writing
+    corresponding: true
+
+  - name: "Gunther Liebhard"
+    affiliation: "BAW Research"
+    email: "gunther.liebhard@baw.at"
+
+  - name: "Thomas Brunner"
+    affiliation: "BAW-IKT"
+    email: "thomas.brunner@baw.at"
+
+  - name: "Peter Strauss"
+    affiliation: "BAW-IKT"
+    email: "peter.strauss@baw.at"
+
+abstract: >
+  This manual provides an overview of the DWA-M 921 framework and serves as a
+  practical field guide for soil erosion mapping using QGIS and QField. It
+  supports the standardized recording of current erosion forms according to
+  the DWA Ruleset.
+
+keywords:
+  - Soil erosion
+  - DWA-M 921
+  - QField
+  - QGIS
+  - Field survey
+  - Erosion mapping
+
+license: "GPL-3.0-or-later"
+
+repository-code: "https://github.com/EdbertoLima/BodenerosionKartieranleitung"
