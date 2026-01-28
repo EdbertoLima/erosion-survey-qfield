@@ -1,0 +1,848 @@
+---
+title: "QField Handbuch: DWA-M-921 Erosionskartierung"
+subtitle: "Feldanleitung für die Kartierung von Bodenerosion"
+authors:
+  - name: Edberto Moura Lima
+    orcid: 0000-0002-8447-8460
+    affiliation: BAW Forschung
+    roles: writing
+    corresponding: true
+    email: edbberto.mouralima@baw.at
+  - name: Gunther Liebhard
+    email: gunther.liebhard@baw.at
+    affiliation: BAW Forschung
+  - name: Thomas Brunner 
+    email: thomas.brunner@baw.at
+    affiliation: BAW-IKT
+  - name: Peter Strauss
+    email: peter.strauss@baw.at
+    affiliation: BAW-IKT
+date: today
+format:
+  html:
+    toc: true
+    toc-depth: 3
+    number-sections: true
+    theme: cosmo
+  pdf:
+    toc: true
+    number-sections: true
+    colorlinks: true
+  docx:
+    toc: true
+    number-sections: true
+    reference-doc: "R:\\Projekte\\Vorlagen\\BR_Bericht_titelbild.dotx"
+lang: de
+---
+
+::: {.callout-note appearance="simple"}
+**Sprachauswahl / Language Selection:**
+[English Version](Manual_organized.html) | **Deutsche Version (aktuell)**
+:::
+
+# Einführung {#sec-introduction}
+
+Diese Anleitungen führen Sie durch den "Bodenerosion durch Wasser"-Workflow (siehe @sec-workflow), um ein Datenerfassungsprojekt einzurichten, Merkmale im Feld zu kartieren, Informationen über digitale Formulare zu erfassen, das Projekt mit einem Team von Mitarbeitern zu teilen, Projektdaten über Webkarten und Dashboards zu visualisieren und Berichtsaufgaben basierend auf Feldbeobachtungen zu automatisieren.
+
+Die Anleitungen basieren auf einer hypothetischen Erhebung am LTE HOAL in Petzenkirchen. Die vorgestellten Konzepte und Fähigkeiten sind jedoch auf eine Vielzahl von Datenerfassungsszenarien übertragbar, wie z.B. Erosionserhebungen, Basis- und Projektüberwachung und -evaluierung, Generierung von Ground-Truth-Daten für die Fernerkundung und Klassifizierung von Bodenerosion oder detaillierte GIS-Kartierung. Diese Kartieranleitung dient als praktisches Werkzeug zur Dokumentation aller Erosions-Subprozesse, von der Ablösung über den Transport bis zur Ablagerung, indem sie in ihrem ökosystemischen Kontext platziert und mit einer standardisierten Terminologie beschrieben werden.
+
+Abhängig vom Maßstab und der Intensität der Kartierung wird zwischen Übersichts- und Detailkartierung unterschieden. Die Kartieranleitung bezieht sich speziell auf Bodenerosion durch Wasser, die hauptsächlich auf Ackerland auftritt.
+
+Die in diesem Projekt angewandte Methodik folgt etablierten Standards, insbesondere den Richtlinien des Deutschen Wasserwirtschaftsverbandes (DWA) zur Dokumentation von wasserbedingter Bodenerosion, bekannt als DWA-M-921 (Bodenerosion durch Wasser – Kartieranleitung zur Erfassung aktueller Erosionsformen).
+
+## Geltungsbereich {#sec-scope}
+
+Diese Kartieranleitung beschränkt sich auf die Dokumentation von wasserbedingter Bodenerosion auf Ackerland. Sie schließt andere Erosionsprozesse und Bodenverlagerungsmechanismen aus, einschließlich Winderosion, unterirdischer Tunnelerosion und Erosion in Wäldern, auf Grünland, Skipisten, Böschungen oder unbefestigten Wegen. Besondere Erosionsformen wie Schneerosion und pflugbedingte Erosion durch landwirtschaftliche Maschinen sind ebenfalls ausgeschlossen.
+
+::: callout-note
+Diese Anleitung beschränkt sich auf die Kartierung und Dokumentation von Erosionsmerkmalen. Sie enthält keine Verfahren zur Schadensbewertung, zur Planung von Minderungs- oder Schutzmaßnahmen oder zur Bewertung zukünftiger Erosionsrisiken.
+:::
+
+# Erste Schritte {#sec-getting-started}
+
+## Über QField {#sec-about-qfield}
+
+**QField** ist eine mobile GIS-Anwendung, die benutzerfreundlich und intuitiv gestaltet ist. Sie ermöglicht es Feldarbeitern, Geodaten direkt im Feld mit Smartphones oder Tablets zu sammeln, zu bearbeiten und zu verwalten. Dieser digitale Ansatz gewährleistet eine effiziente Datenerfassung und eine nahtlose Integration in die GIS-Infrastruktur des Projekts.
+
+### Wo bekomme ich QField?
+
+Die mobile Anwendung wird von der Schweizer Firma [OPENGIS](https://qfield.org/) bereitgestellt und ist kostenlos im Google Play Store erhältlich. Die Software wird unter der GNU General Public License Version 2.0 (GPL-2.0) veröffentlicht, was die Nutzung, Änderung und Weitergabe gemäß den Lizenzbedingungen erlaubt. Die Erstellung und Vorbereitung projektspezifischer Datensätze erfordert die Verwendung der Desktop-GIS-Software [QGIS (Version 3 oder höher)](https://qgis.org/).
+
+OPENGIS bietet einen optionalen Cloud-Dienst an, der eine zentralisierte Projektverwaltung und Datensynchronisation über das Internet ermöglicht ([QFieldCloud](https://qfield.cloud/)). Die Anwendung kann auch vollständig ohne die Nutzung dieses Dienstes betrieben werden. Zusätzliche technische Informationen und Dokumentationen sind beim Hersteller erhältlich.
+
+### Weiterführende Literatur
+
+Entdecken Sie die offizielle QField-Dokumentation für den Einstieg in [QFieldCloud](https://docs.qfield.org/get-started/tutorials/get-started-qfc/) und [QFieldSync](https://docs.qfield.org/get-started/tutorials/get-started-qfs/). Die [QField How-to-Anleitungen](https://docs.qfield.org/how-to/) enthalten viele Tipps und Beispiele für die Erstellung großartiger Datenerfassungsprojekte.
+
+## Projekteinrichtung {#sec-project-setup}
+
+Auf dem Startbildschirm von QField werden den Benutzern zwei Optionen zum Öffnen eines Projekts angeboten:
+
+-   **QFieldCloud-Projekte**: Zugriff auf ein auf QFieldCloud gespeichertes Projekt (Cloud-basierte Synchronisation)
+-   **Lokale Datei öffnen**: Kopieren einer Arbeitskopie der QGIS-Projektdatei von einem Laptop oder PC auf das Telefon oder Tablet
+
+![QField Anwendungs-Startbildschirm.](screemshots/Screenshot_20260127_101009.jpg){#fig-Application-homescreen}
+
+Für diese Anleitung verwenden wir **Lokale Datei öffnen**, um das Projekt "Bodenerosion durch Wasser" zu importieren. Nach Abschluss der Feldarbeit können Projekte mit den in @sec-data-export beschriebenen Methoden geteilt werden.
+
+::: callout-note
+-   Die App kann im Feld ohne Internetverbindung verwendet werden.
+-   Eine Internetverbindung ist erforderlich, um die App und die zugehörige Datei herunterzuladen.
+-   GPS muss während der Felddatenerfassung eingeschaltet sein. Sie können es für den gesamten Datenerfassungsprozess eingeschaltet lassen oder es zwischen den Objekten ausschalten, um den Akku zu schonen.
+:::
+
+### Aus lokalem Speicher importieren
+
+Nachdem Sie "Lokale Datei öffnen" ausgewählt haben, sehen Sie die Dateibrowser-Oberfläche mit drei Hauptverzeichnissen:
+
+-   **QField-Dateiverzeichnis**
+-   **Importierte Datensätze**
+-   **Importierte Projekte**
+
+Ein Dropdown-Menü, das über eine Plus-Schaltfläche unten rechts zugänglich ist, listet die Möglichkeiten zum Importieren von Projekten und Datensätzen auf:
+
+-   **Projekt aus Ordner importieren**
+-   **Projekt aus ZIP importieren** (Archiv)
+-   **Import (einzelner) Datensätze**
+-   **Von URL importieren**
+
+![Importmenü aus **lokaler Datei.** QField-Importoptionen: Dateibrowser (links) und Importaktionsmenü (rechts). Das Dropdown-Menü listet die Möglichkeiten zum Importieren von Projekten und Datensätzen auf: Projekt aus Ordner importieren, Projekt aus ZIP (Archiv) importieren und (einzelne) Datensätze importieren.](screemshots/Screenshot_20260127_101551.jpg){#fig-import-menu}
+
+### Projekt aus Ordner oder ZIP-Archiv importieren
+
+Beim Importieren eines Projekts aus einem Ordner oder einem ZIP-Archiv:
+
+1.  Sie werden gebeten, QField die Erlaubnis zu erteilen, den Inhalt eines bestimmten Ordners auf dem Gerätespeicher über eine Systemordnerauswahl zu lesen.
+2.  Wenn der Ordner oder das Archiv ausgewählt ist, kopiert QField den Inhalt (einschließlich seiner Unterordner) in den Speicherort "Importierte Projekte" der App.
+3.  Sie können das Projekt dann von dort aus öffnen.
+
+::: callout-tip
+Das erneute Importieren eines bestimmten Ordners über die Dropdown-Menüaktion überschreibt bereits vorhandene Projekte mit identischem Ordnernamen. Dies ermöglicht es Ihnen, Projekte zu aktualisieren.
+:::
+
+### Einzelne Datensätze importieren
+
+Sie können auch einzelne Datensätze importieren:
+
+1.  Sie werden gebeten, eine oder mehrere Dateien über eine Systemdateiauswahl auszuwählen.
+2.  Die Dateien werden in den Ordner "Importierte Datensätze" kopiert.
+3.  Stellen Sie sicher, dass beim Importieren alle Sidecar-Dateien ausgewählt werden (z. B. würde ein Shapefile-Datensatz erfordern, dass Sie die .shp-, .shx-, .dbf-, .prj- und .cpg-Dateien auswählen).
+
+### Von URL importieren (Empfohlen)
+
+Beim Importieren eines Projekts oder eines einzelnen Datensatzes über die Aktion "Von URL importieren" werden Sie gebeten, eine URL-Zeichenfolge zu einer Datei anzugeben. QField ruft anschließend den Inhalt ab und speichert ihn in "Importierte Projekte" oder "Importierte Datensätze".
+
+::: {#fig-import-url}
+![Importieren von einer URL. QField betrachtet ein ZIP-Archiv als komprimiertes Projekt, wenn eine oder mehrere .qgs/.qgz-Projektdateien erkannt werden.](screemshots/Screenshot_20260127_102013.jpg)
+:::
+
+Dies ist die einfachste Methode, um das Projekt "Bodenerosion durch Wasser" zu erhalten:
+
+1.  Tippen Sie auf **"Von URL importieren"**.
+2.  Geben Sie die folgende URL ein:
+```         
+https://github.com/EdbertoLima/BodenerosionKartieranleitung/raw/main/erosion_survey_qfield.zip
+```
+3.  Tippen Sie auf **"OK"**, um den Download zu starten.
+4.  Warten Sie, bis QField das Projekt heruntergeladen und extrahiert hat.
+5.  Das Projekt erscheint nach Abschluss in "Importierte Projekte".
+
+::: callout-caution
+**Projekte aktualisieren**: Das erneute Importieren eines Projektordners mit demselben Namen überschreibt das vorhandene Projekt. Verwenden Sie diese Methode, um Projekte mit neuen Konfigurationen oder leeren Datenbanken vor der Feldarbeit zu aktualisieren.
+:::
+
+## Das Projekt öffnen {#sec-opening-project}
+
+1.  Navigieren Sie zu **"Importierte Projekte"** im Dateibrowser.
+2.  Suchen Sie den Ordner **erosion_survey**.
+3.  Tippen Sie auf `erosion_survey.qgz`, um das Projekt zu öffnen.
+4.  Warten Sie, bis alle Layer geladen sind.
+
+# Benutzeroberfläche {#sec-user-interface}
+
+## Kartenansicht {#sec-map-canvas}
+
+Nach dem Öffnen eines Projekts wird im zentralen Bereich des Bildschirms die Karte mit allen geladenen Layern angezeigt.
+
+::: {#fig-mapcanvas layout-ncol="2"}
+![Kartenansicht des Untersuchungsgebiets mit geladenen Basiskartenbildern und Erosionsmerkmal-Layern.](screemshots/Screenshot_20260127_114135.jpg){#fig-mapcanvas-view}
+
+![QField-Oberflächenelemente: Menü-Button für den Dashboard-Zugriff, Suchpositionsanzeige und GPS-Positionsanzeige.](images/paste-13.png){#fig-mapcanvas-elements}
+
+Kartenansicht-Oberfläche. Links: Kartenansicht mit Untersuchungsgebiet und geladenen Layern. Rechts: Oberflächenelemente und Steuerelemente für Navigation und Datenerfassung.
+:::
+
+Sie können mit der Karte über Touch-Gesten interagieren:
+
+-   **Schwenken**: Mit einem Finger ziehen
+-   **Zoomen**: Mit zwei Fingern zusammen- oder auseinanderziehen
+-   **Drehen**: Drehgeste mit zwei Fingern
+
+## Dashboard und Legende {#sec-dashboard-legend}
+
+Das Dashboard bietet Zugriff auf Layer, Einstellungen und den Digitalisiermodus.
+
+**So öffnen Sie das Dashboard:**
+
+1.  Tippen Sie auf das **Menü-Symbol** (☰) in der oberen linken Ecke, ODER
+2.  Wischen Sie vom **linken Bildschirmrand** zur Mitte.
+
+Öffnen Sie das seitliche "Dashboard" und erweitern Sie die Layer-Liste, um die Legende der Karte anzuzeigen.
+
+::: {#fig-legend layout-ncol="2" fig-align="center" style="max-width: 90%; margin: auto;"}
+![Dashboard-Panel](screemshots/Screenshot_20260127_111340.jpg){#fig-legend-panel}
+
+![Layer-Optionen](screemshots/Screenshot_20260127_111309.jpg){#fig-legend-options}
+
+![Dashboard- und Legendenelemente](images/paste-14.png){#fig-legend-elements}
+
+Kartenlegenden-Oberfläche in QField. (a) Dashboard-Panel mit der Liste der Kartenlayer. (b) Layer-Kontextmenü mit Sichtbarkeits-, Beschriftungs-, Deckkraft- und Navigationsoptionen. (c) Legendenelemente mit Symbologie und Layer-Indikatoren zur Karteninterpretation.
+:::
+
+### Layer-Optionen
+
+Drücken Sie lange auf einen Layer-Namen, um auf diese Optionen zuzugreifen:
+
++-----------------------------+----------------------------------------------------------------+
+| Aktion                      | Beschreibung                                                   |
++=============================+================================================================+
+| **Legendeneintrag ausklappen** | Unterpunkte des Layers ein-/ausblenden                       |
++-----------------------------+----------------------------------------------------------------+
+| **Auf Karte anzeigen**      | Sichtbarkeit steuern                                           |
++-----------------------------+----------------------------------------------------------------+
+| **Beschriftungen anzeigen** | Sichtbarkeit der Beschriftungen steuern                        |
++-----------------------------+----------------------------------------------------------------+
+| **Deckkraft-Schieberegler** | Transparenz des Layers steuern                                 |
++-----------------------------+----------------------------------------------------------------+
+| **Auf Layer zoomen**        | Alle Elemente des Layers auf der Karte anzeigen                |
++-----------------------------+----------------------------------------------------------------+
+| **Neu laden-Symbol**        | Aktuelle Daten eines Layers mit externen Quellen abrufen       |
++-----------------------------+----------------------------------------------------------------+
+| **Feature-Liste anzeigen**  | Alle Merkmale des Layers in der Identifikationsliste anzeigen |
++-----------------------------+----------------------------------------------------------------+
+| **Tracking einrichten**     | Tracking-Modus des Layers einrichten                           |
++-----------------------------+----------------------------------------------------------------+
+
+# Feldkartierungs-Workflow {#sec-workflow}
+
+## Erhebungskonzepte {#sec-survey-concepts}
+
+Das Projekt organisiert Daten in spezifischen "Layern" basierend auf der Form des Merkmals, das Sie kartieren. Diese Struktur folgt dem **DWA-M-921**-Standard, der die Trennung von Erosionsmerkmalen in Flächen (Polygone), Linien und Punkte vorschreibt.
+
+Stellen Sie sich diese Layer als digitale Behälter vor. Sie müssen den richtigen Behälter auswählen, bevor Sie mit dem Zeichnen beginnen:
+
++--------------------------------------------------------------------------+----------------------+--------------+
+| **Wenn Sie dies im Feld sehen...**                                       | **Verwenden Sie diesen Layer** | **Geometrie**|
++--------------------------------------------------------------------------+----------------------+--------------+
+| **Feldgrenzen**                                                          | `Flächen-/Feldblock` | Polygon ⬠    |
+|                                                                          |                      |              |
+| Der Umriss der Parzelle oder des Feldblocks.                             |                      |              |
++--------------------------------------------------------------------------+----------------------+--------------+
+| **Große Erosionsflächen**                                                | `Flächenhafte`       | Polygon ⬠    |
+|                                                                          |                      |              |
+| Flachenerosion, Sedimentfächer (Akkumulationszonen) oder Landnutzungsmuster. |                    |              |
++--------------------------------------------------------------------------+----------------------+--------------+
+| **Kanäle & Fließwege**                                                   | `Linienhafte`        | Linie ∿       |
+|                                                                          |                      |              |
+| Rillen, Rinnen, Entwässerungsgräben oder konzentrierte Fließwege.        |                      |              |
++--------------------------------------------------------------------------+----------------------+--------------+
+| **Spezifische Punkte**                                                   | `Punktförmige`       | Punkt •      |
+|                                                                          |                      |              |
+| Rohrauslässe, Erosionsanrisse, Schadenspunkte oder kleine Sedimentablagerungen.|                |              |
++--------------------------------------------------------------------------+----------------------+--------------+
+
+### Kartierungsintensitätsstufen
+
+Bevor Sie mit der Aufzeichnung von Attributen beginnen, müssen Sie sich für die "Intensität" Ihrer Erhebung entscheiden. Sie geben diese Wahl in den Attributen des **Feldblocks** (*Flächen-/Feldblock*) an. Die Wahl der Kartierungsintensität hängt vom Maßstab und der spezifischen Frage ab, die Sie beantworten müssen.
+
+Der DWA-M-921-Standard unterscheidet zwischen zwei Kartierungsansätzen:
+
+#### 1. Übersichtskartierung
+
+-   **Ziel:** Eine verallgemeinerte Darstellung von Erosionsereignissen, -ursachen und -auswirkungen.
+-   **Methode:** Konzentriert sich auf qualitative Beschreibungen (z.B. "Starke Rillenerosion vorhanden") anstatt auf präzise Messungen.
+-   **Workflow:** wird oft als "Windschutzscheiben-Erhebung" vom Feldrand aus durchgeführt.
+-   **Anwendungsfall:**
+    -   Identifizierung von Schadens-Hotspots und -Ursachen in einem größeren Einzugsgebiet.
+    -   Langzeitüberwachung von großflächigen Erosionstrends.
+    -   Visualisierung von Erosionssystemen (Transportwege, Akkumulation und externe Effekte).
+    -   Planung von Standorten für zukünftige Detailerhebungen.
+
+#### 2. Detailkartierung
+
+-   **Ziel:** Präzise Lokalisierung und Quantifizierung des Bodenverlusts.
+-   **Methode:** Erfordert die Messung der genauen Abmessungen jedes Merkmals (Breite, Tiefe, Länge) zur Berechnung des Volumens in Kubikmetern.
+-   **Workflow:** Erfordert das Begehen des gesamten Feldes und den Zugang zu jedem Merkmal vor Ort.
+-   **Spezifische Aufgaben:**
+    -   Übertrittstellen: Charakterisieren Sie genau, wo Wasser und Sediment in Gräben, Gewässer, benachbarte Felder oder Infrastruktur (Straßen/Rohre) eintreten.
+    -   Standortbedingungen: Beschreiben Sie die Einzugsgebietsgröße, Hangneigung, Bodeneigenschaften, Bewirtschaftungsmethoden, Kulturen und bestehende Bodenschutzmaßnahmen.
+    -   Landschaftselemente: Kartieren Sie Merkmale, die die Erosion hemmen (z.B. Hecken, Gras-Pufferstreifen).
+    -   Quantifizierung: Exakte Messung von Erosions- und Akkumulationsformen.
+
+::: callout-important
+**Pflichtdaten:** Alle in der Übersichtskartierung erfassten Parameter sind **auch für die Detailkartierung obligatorisch**. Die Detailkartierung fügt lediglich weitere Felder (wie Volumen und exakte Abmessungen) zu den grundlegenden Übersichtsdaten hinzu. Siehe @sec-appendices für die vollständigen Parameterlisten.
+:::
+
+## Grundlegende Bearbeitung {#sec-basic-editing}
+
+QField arbeitet in zwei unterschiedlichen Modi:
+
++-------------------+------------+-------------------------------------------------------------------------------------------------+-----------------------+
+| **Modus**         | **Symbol** | **Funktion**                                                                                    | **Stellen Sie es sich vor als...** |
++-------------------+------------+-------------------------------------------------------------------------------------------------+-----------------------+
+| **Anzeigemodus**  | (Standard) | **Ansehen & Prüfen.** Sie können auf Merkmale tippen, um deren Daten anzuzeigen, aber Sie können sie nicht verschieben oder erstellen. | **"Lese"-Modus.**   |
++-------------------+------------+-------------------------------------------------------------------------------------------------+-----------------------+
+| **Digitalisiermodus** | ✎ (Stift) | **Erstellen & Bearbeiten.** Entsperrt die Karte zum Zeichnen neuer Linien, Punkte und Polygone. | **"Schreib"-Modus.**   |
++-------------------+------------+-------------------------------------------------------------------------------------------------+-----------------------+
+
+### Anzeigemodus
+
+Wie der Name schon sagt, können Sie im Anzeigemodus Merkmale in allen identifizierbaren Layern des Projekts anzeigen und auswählen. Es ist auch möglich, Attribute bestehender Merkmale zu bearbeiten, indem Sie auf ein interessierendes Merkmal klicken und dessen Attributtabelle öffnen. Für fortgeschrittenere Änderungen siehe @sec-advanced-features.
+
+### Wie man mit dem Digitalisieren beginnt
+
+Um ein neues Erosionsmerkmal aufzuzeichnen, müssen Sie die App aktiv in den "Schreib"-Modus schalten.
+
+1.  **Dashboard öffnen:** Tippen Sie auf das **Menü (☰)** oder wischen Sie von links.
+2.  **Bearbeitung aktivieren:** Tippen Sie auf das **Stiftsymbol** ✎. Die Benutzeroberfläche ändert sich.
+3.  **Layer auswählen:** Tippen Sie auf den Layer, den Sie bearbeiten möchten (z. B. `Linienhafte` für eine Rille).
+    -   *Visuelle Überprüfung:* Der Name des aktiven Layers wird **GRÜN**.
+4.  **Zeichnen:** Schließen Sie das Dashboard und verwenden Sie die **(+)**-Schaltfläche, um Punkte auf der Karte zu setzen.
+
+::: callout-tip
+## Intelligente Geometrie
+
+QField stellt sicher, dass digitalisierte Geometrien keine doppelten Stützpunkte aufweisen und respektiert die Geometriepräzisionseinstellungen des aktuell ausgewählten Layers.
+:::
+
+## Digitalisieren einer Erhebungseinheit (Feldblock) {#sec-digitizing-field-block}
+
+Eine **Erhebungseinheit (Flächen-/Feldblock)** ist für jeden Kartierungseintrag erforderlich. Diese Parzelle wird über den Layer `Flächen-/Feldblock` definiert und dient als räumlicher Bezug für die Bewertung. Sie muss ausgefüllt sein, bevor Erosionsmerkmale aufgezeichnet werden können. Der Detaillierungsgrad (Übersichts- vs. Detailkartierung) wird in den Attributen der Parzelle festgelegt.
+
+### Schritt 1: Layer auswählen und Digitalisierung aktivieren
+
+1.  Öffnen Sie das **Dashboard** (von links wischen oder ☰ tippen) und tippen Sie auf das **Stiftsymbol**, um den Digitalisiermodus zu aktivieren.
+2.  Wählen Sie den Layer `Flächen-/Feldblock` aus (grün hervorgehoben).
+
+![Digitalisiermodus aktivieren. Tippen Sie auf das Stiftsymbol in der Kopfzeile des Dashboards, um den Digitalisiermodus zu aktivieren. Wenn aktiv, erscheint die Sketcher-Werkzeugleiste am unteren Bildschirmrand mit Steuerelementen für Stützpunkte.](screemshots/Screenshot_20260127_102334.jpg){#fig-sketcher-enable}
+
+### Schritt 2: Die Parzellengrenze digitalisieren
+
+1.  Positionieren Sie das Fadenkreuz an einer Feldecke und tippen Sie auf **[+**], um einen Stützpunkt hinzuzufügen.
+2.  Wiederholen Sie dies für alle Ecken, um den Umriss nachzuzeichnen.
+3.  Tippen Sie auf **[✓**], um das Polygon abzuschließen.
+
+::: {#fig-polygon-vertices layout-ncol="2"}
+![Hinzufügen des zweiten Stützpunkts an der nächsten Feldecke. Die Verbindungslinie zeigt die entstehende Polygongrenze.](screemshots/Screenshot_20260128_111103.jpg){#fig-vertex-second}
+
+![Mehrere Stützpunkte entlang des Feldumrisses platziert. Fügen Sie weitere Stützpunkte hinzu, bis die Grenze vollständig ist.](screemshots/Screenshot_20260127_102649.jpg){#fig-vertex-multiple}
+
+Aufbau der Polygongrenze. Positionieren Sie das Fadenkreuz an der Startecke der Feldgrenze und tippen Sie dann auf die grüne [+]-Schaltfläche. Der erste Stützpunkt wird markiert und der Sketcher beginnt mit der Aufzeichnung des Polygons.
+:::
+
+### Schritt 3: Attribute ausfüllen
+
+1.  Das Attributformular öffnet sich automatisch.
+2.  Füllen Sie die erforderlichen Erhebungsdaten aus (Identifikator, Datum, Landnutzung).
+3.  Tippen Sie auf **[✓**], um die Parzelle zu speichern.
+
+![Feldblock-Attributformular. Füllen Sie alle erforderlichen Felder (gekennzeichnet mit * ) vor dem Speichern aus. Dropdown-Menüs bieten standardisierte DWA-M-921-Klassifizierungsoptionen.](screemshots/Screenshot_20260127_102914.jpg){#fig-form-fieldblock}
+
+## Aufzeichnung von Erosionsmerkmalen {#sec-recording-features}
+
+### Aufzeichnung von Polygon-Merkmalen
+
+Um Polygon- (Flächen-) Merkmale aufzuzeichnen, verwenden Sie den `Flächenhafte`-Layer. Dieser Layer ist für die Kartierung von flächenhaften und flächenhaft-linearen Erosionsformen, Akkumulationsbereichen, Einzugsgebieten von Erosionssystemen sowie Landnutzungs- und Bewirtschaftungstypen vorgesehen. Polygongeometrien werden immer dann angewendet, wenn Erosions- oder Ablagerungsprozesse einen klar definierten Bereich betreffen und nicht ein lineares Merkmal oder einen einzelnen Punkt.
+
+#### Schritte 1 bis 3: Layer auswählen und Digitalisierung aktivieren
+
+1.  Öffnen Sie das **Dashboard** (☰) und tippen Sie auf das **Stiftsymbol**, um den Digitalisiermodus zu aktivieren.
+2.  Wählen Sie den `Flächenhafte`-Layer.
+3.  Navigieren Sie das Fadenkreuz in der Mitte des Bildschirms zum gewünschten Start des Polygons.
+4.  Klicken Sie auf die **Plus (+)**-Schaltfläche unten rechts auf dem Bildschirm, um den ersten Knoten hinzuzufügen.
+5.  Fügen Sie weitere Punkte hinzu, um Ihre Linie oder Ihr Polygon zu bilden, indem Sie jedes Mal auf die **Plus (+)**-Schaltfläche klicken, wenn Sie einen neuen Knoten hinzufügen möchten.
+6.  (Optional) Klicken Sie auf die **Minus (-)**-Schaltfläche, um den zuletzt hinzugefügten Knoten zu entfernen.
+7.  Klicken Sie auf die **[✓**]-Schaltfläche, um Ihre Bearbeitung abzuschließen.
+    -   Sie benötigen mindestens **2 Knoten** für Linienmerkmale.
+    -   Sie benötigen mindestens **3 Knoten** für Polygone.
+8.  (Optional) Sie können auf die **(x)**-Schaltfläche klicken, um die aktuelle Merkmalserstellung abzubrechen.
+
+#### Schritt 4: Das Attributformular ausfüllen
+
+1.  Das Attributformular öffnet sich automatisch.
+2.  Wählen Sie die Erosionsform (Rille, Rinne, ephemere Rinne).
+3.  Geben Sie die durchschnittliche Breite und Tiefe ein.
+4.  Tippen Sie auf **[✓**], um das Merkmal zu speichern.
+
+### Aufzeichnung von linearen Erosionsmerkmalen
+
+Verwenden Sie den `Linienhafte`-Layer, um Rillen, Rinnen, ephemere Rinnen und konzentrierte Fließwege zu kartieren. Lineare Merkmale werden entlang der Mittellinie des Erosionskanals digitalisiert.
+
+::: callout-important
+## Identifizieren Sie das lineare Merkmal
+
+Beurteilen Sie das Erosionsmerkmal vor dem Digitalisieren:
+-   Lokalisieren Sie den **Startpunkt** (normalerweise hangaufwärts, am Erosionsanriss).
+-   Folgen Sie dem **Kanalverlauf** bis zum Endpunkt.
+-   Beachten Sie die **Breiten-** und **Tiefen**variationen.
+-   Identifizieren Sie alle **Verzweigungen** oder **Zusammenflüsse**.
+:::
+
+![](screemshots/Screenshot_20260127_104300.jpg)
+
+![](screemshots/Screenshot_20260127_104357.jpg)
+
+#### Schritte 1 bis 3: Layer auswählen und Digitalisierung aktivieren
+
+1.  Öffnen Sie das **Dashboard** (☰) und tippen Sie auf das **Stiftsymbol**, um den Digitalisiermodus zu aktivieren.
+2.  Wählen Sie den `Linienhafte`-Layer.
+3.  Positionieren Sie das Fadenkreuz am Anfang des Erosionsmerkmals (normalerweise hangaufwärts am Erosionsanriss).
+4.  Klicken Sie auf **Plus (+)**, um den ersten Knoten hinzuzufügen.
+5.  Fügen Sie weitere Punkte hinzu, um Ihre Linie zu bilden, indem Sie jedes Mal auf die **Plus (+)**-Schaltfläche klicken, wenn Sie einen neuen Knoten hinzufügen möchten.
+6.  (Optional) Klicken Sie auf die **Minus (-)**-Schaltfläche, um den zuletzt hinzugefügten Knoten zu entfernen.
+7.  Klicken Sie auf **[✓**], um die Linie abzuschließen (mindestens 2 Stützpunkte).
+8.  (Optional) Sie können auf die **(x)**-Schaltfläche klicken, um die aktuelle Merkmalserstellung abzubrechen.
+
+::: callout-tip
+**Digitalisierrichtung**: Digitalisieren Sie lineare Erosionsmerkmale immer von **hangaufwärts nach hangabwärts** (vom Anfang zum Auslass). Diese Konvention gewährleistet eine konsistente Datenanalyse und Interpretation der Fließrichtung.
+:::
+
+#### Schritt 4: Das Attributformular ausfüllen
+
+1.  Das Attributformular öffnet sich automatisch.
+2.  Wählen Sie die Erosionsform (Rille, Rinne, ephemere Rinne).
+3.  Geben Sie die durchschnittliche Breite und Tiefe ein.
+4.  Tippen Sie auf **[✓**], um das Merkmal zu speichern.
+
+### Aufzeichnung von Punkt-Erosionsmerkmalen
+
+Verwenden Sie den `Punktförmige`-Layer, um Rohrauslässe, Erosionsanrisse, spezifische Schadenspunkte und Fotodokumentationsstandorte aufzuzeichnen. Punktmerkmale repräsentieren lokalisierte Erosionsphänomene.
+
+#### Schritt 1: Digitalisiermodus aktivieren und Layer auswählen
+
+2.  Öffnen Sie das Dashboard (☰) und tippen Sie auf das Stiftsymbol, um den Digitalisiermodus zu aktivieren.
+3.  Wählen Sie den **`Punktförmige`**-Layer.
+4.  Schließen Sie das Dashboard.
+
+#### Schritt 2: Positionieren und Platzieren des Punktes
+
+1.  Navigieren Sie zum Standort des Merkmals.
+2.  Positionieren Sie das Fadenkreuz **genau** am gewünschten Punkt.
+3.  Tippen Sie auf **[✓**], um den Punkt zu platzieren.
+4.  Das Attributformular öffnet sich sofort.
+
+![Platzieren eines Punktmerkmals. Positionieren Sie das Fadenkreuz präzise am Standort des Erosionsmerkmals (Rohrauslass, Erosionsanriss usw.) und tippen Sie dann auf [+], um den Punkt zu platzieren und das Attributformular zu öffnen.](screemshots/Screenshot_20260127_104830.jpg){#fig-point-place}
+
+#### Schritt 3: Das Attributformular ausfüllen
+
+1.  Wählen Sie den Merkmalstyp (z. B. Erosionsanriss, Rohrauslass).
+2.  Fügen Sie eine kurze Beschreibung oder einen Kommentar hinzu.
+3.  Bewerten Sie gegebenenfalls den Schweregrad.
+4.  Tippen Sie auf **[✓**], um das Merkmal zu speichern.
+
+## Anhängen von Fotos {#sec-attaching-photos}
+
+Fotografien liefern eine wesentliche visuelle Dokumentation von Erosionsmerkmalen. Mit QField können Sie Fotos direkt aufnehmen und an Merkmalsdatensätze anhängen. Die aufgenommenen Fotos werden mit den Merkmalsdaten gespeichert und können wie in @sec-data-export beschrieben übertragen werden.
+
+### Schritt 1: Das Fotofeld finden
+
+1.  Nachdem Sie eine Merkmalsgeometrie erstellt haben, öffnet sich das Attributformular.
+2.  Scrollen Sie durch das Formular, um das Feld **Foto** oder **Anhänge** zu finden.
+3.  Das Feld zeigt ein **Kamerasymbol** oder eine **Anhang-Schaltfläche**.
+
+### Schritt 2: Ein neues Foto aufnehmen
+
+1.  Tippen Sie auf das **Kamerasymbol** oder die Schaltfläche **"Foto aufnehmen"**.
+2.  Die Kameraanwendung des Geräts öffnet sich.
+3.  Richten Sie das interessierende Merkmal im Sucher aus:
+    -   Beziehen Sie den **Kontext** (umgebender Bereich) mit ein.
+    -   Zeigen Sie einen **Maßstabsbezug** (Lineal, Person, Objekt).
+    -   Erfassen Sie **Details** der Erosionseigenschaften.
+4.  Tippen Sie auf den **Auslöser**, um das Foto aufzunehmen.
+5.  Überprüfen Sie das Bild.
+6.  Tippen Sie auf **"OK"**, **"Foto verwenden"** oder das **Häkchen**, um es zu akzeptieren.
+7.  Das Foto wird dem Merkmalsdatensatz angehängt.
+
+::: {#fig-photo-capture layout-ncol="2"}
+![Kamera-Oberfläche zur Aufnahme von Fotos von Erosionsmerkmalen. Richten Sie das Merkmal mit sichtbarem Kontext und Maßstabsbezug aus.](screemshots/Screenshot_20260127_103806.jpg){#fig-camera-view}
+![An einen Merkmalsdatensatz angehängtes Foto. Weitere Fotos können durch erneutes Tippen auf das Kamerasymbol hinzugefügt werden.](screemshots/Screenshot_20260127_103811.jpg)
+![An einen Merkmalsdatensatz angehängtes Foto. Weitere Fotos können durch erneutes Tippen auf das Kamerasymbol hinzugefügt werden.](screemshots/Screenshot_20260127_104037.jpg){#fig-photo-attached}
+Fotodokumentations-Workflow. Links: Kamera-Oberfläche zur Aufnahme von Fotos. Rechts: Angehängtes Foto im Attributformular angezeigt.
+:::
+
+### Schritt 3: Mehrere Fotos hinzufügen
+
+1.  Nachdem Sie das erste Foto angehängt haben, tippen Sie erneut auf das **Kamerasymbol**.
+2.  Nehmen Sie zusätzliche Fotos auf, die Folgendes zeigen:
+    -   **Übersicht** – Weitwinkelaufnahme, die das Merkmal im Landschaftskontext zeigt.
+    -   **Detail** – Nahaufnahme der Erosionseigenschaften.
+    -   **Querschnitt** – Kanalform und -tiefe.
+    -   **Auf- und Abstrom** – Ansichten entlang des Merkmals.
+3.  Jedes Foto wird der Anhangsliste hinzugefügt.
+
+### Schritt 4: Vorhandene Fotos aus der Galerie hinzufügen
+
+1.  Tippen Sie auf das **Galeriesymbol** oder die Option **"Aus Galerie hinzufügen"**.
+2.  Navigieren Sie, um vorhandene Fotos auszuwählen.
+3.  Wählen Sie ein oder mehrere Bilder aus.
+4.  Die Fotos werden dem Merkmalsdatensatz angehängt.
+
+::: callout-tip
+**Best Practices für Fotos:**
+-   **Fügen Sie immer einen Maßstabsbezug hinzu** (Lineal, Maßband oder bekanntes Objekt).
+-   **Nehmen Sie mehrere Winkel auf** für eine umfassende Dokumentation.
+-   **Notieren Sie die Fotorichtung** in den Kommentaren (z. B. "Blick hangabwärts").
+-   **Sorgen Sie für ausreichende Beleuchtung** für eine klare Detailerkennbarkeit.
+-   **Vermeiden Sie Schatten**, die Erosionsmerkmale verdecken.
+:::
+
+# Fortgeschrittene Funktionen {#sec-advanced-features}
+
+## Geometriebearbeitung {#sec-geometry-editing}
+
+So bearbeiten Sie die Geometrie bereits vorhandener Merkmale:
+1.  Aktivieren Sie den **Digitalisiermodus**, indem Sie auf das Stiftsymbol unter der Legende tippen.
+2.  Sobald Sie sich im Digitalisiermodus befinden, erscheint in der Titelleiste eines identifizierten Merkmalsformulars eine neue Schaltfläche **Geometrie bearbeiten**.
+3.  Durch Klicken auf die Schaltfläche wird die Geometriebearbeitungsumgebung aktiviert.
+
+### Bearbeitungswerkzeuge
+
+Die Geometriebearbeitungsumgebung bietet vier Werkzeuge:
+
+#### Stützpunkt-Werkzeug
+
+Der Stützpunkt-Editor ermöglicht es Ihnen, bereits vorhandene Stützpunkte zu verschieben, zu löschen oder neue Stützpunkte zu Geometrien hinzuzufügen.
+
+::: {#fig-vertex-tool layout-ncol="2"}
+![Bearbeiten von Stützpunkten eines Polygonmerkmals.](screemshots/Screenshot_20260127_103035.jpg)
+![Verschieben eines Stützpunkts zur Anpassung der Form des Merkmals.](screemshots/Screenshot_20260127_103602.jpg)
+Verwendung des Stützpunkt-Werkzeugs zur Änderung der Geometrie eines Merkmals.
+:::
+
+#### Form neu gestalten-Radierer-Werkzeug
+
+Das Form neu gestalten-Radierer-Werkzeug dient dazu, das Entfernen von Teilen einer Linien- oder Polygongeometrie zu erleichtern. Das Werkzeug ahmt Radierer-Werkzeuge aus 2D-Zeichenprogrammen nach und funktioniert am besten mit einem Eingabestift.
+**Beispiel**: Angenommen, Sie haben ein Polygon, das einen Gebäudegrundriss darstellt, aber es gibt einen unerwünschten Vorsprung. Sie können das Radierer-Werkzeug verwenden, um diesen Teil des Polygons präzise zu entfernen.
+
+## Features löschen {#sec-deleting-features}
+
+Das Löschen eines Features erfolgt durch:
+1.  Tippen Sie auf das Feature, um es zu identifizieren.
+2.  Öffnen Sie das Feature-Formular.
+3.  Wählen Sie die Aktion **Feature löschen** im Menü (⋮) des Feature-Formulars.
+4.  Bestätigen Sie das Löschen.
+
+::: {#fig-delete-single}
+![Die Option 'Feature löschen' im Feature-Menü.](screemshots/Screenshot_20260127_104903.jpg)
+:::
+
+### Mehrere Features löschen
+
+QField ermöglicht es Ihnen auch, mehrere Features gleichzeitig zu löschen:
+1.  Identifizieren Sie zuerst die Features durch kurzes Tippen auf die relevanten Teile der Karte.
+2.  Aktivieren Sie den Mehrfachauswahlmodus durch **langes Drücken** auf eines der Features, das Sie löschen möchten.
+3.  Wenn Kontrollkästchen neben den Feature-Namen erscheinen, wählen Sie weitere zu löschende Features aus (Sie können auch auf die Karte tippen, um weitere Features hinzuzufügen).
+4.  Wenn Sie fertig sind, wählen Sie die Aktion **Ausgewählte(s) Feature(s) löschen** im Menü der Feature-Liste (⋮).
+5.  Bestätigen Sie das Löschen.
+
+::: callout-warning
+Das Löschen ist endgültig. Stellen Sie sicher, dass Sie eine Sicherungskopie haben, bevor Sie Features löschen.
+:::
+
+## Zusätzliche Einstellungen {#sec-additional-settings}
+
+Es gibt weitere fortgeschrittene Einstellungen, die Sie aktivieren können, um Ihre Datenerfassung effizienter zu gestalten:
+
+-   **Lautstärketasten zum Digitalisieren verwenden**: Wenn Sie vermeiden möchten, für jeden Knoten auf Ihr Gerät tippen zu müssen, können Sie diese Option aktivieren, um Knoten mit den Lautstärketasten hinzuzufügen und zu entfernen (nur Android).
+-   **Fingertipp auf Leinwand zum Hinzufügen von Stützpunkten erlauben**: Wenn Sie Ihren Finger zum Hinzufügen von Knoten verwenden möchten, anstatt die ganze Zeit auf die Schaltfläche drücken zu müssen.
+
+So aktivieren Sie beide Optionen:
+1.  Öffnen Sie das seitliche "Dashboard"-Panel (☰).
+2.  Navigieren Sie zu **Einstellungen > Allgemein**.
+
+### Attributwerte merken
+
+Für die schnelle Erfassung von eher homogenen Datensätzen ist es entscheidend, nicht mehrmals dieselben Attributwerte eingeben zu müssen. Die Anstecknadeln rechts neben jedem Attribut aktivieren die Option **letzter eingegebener Wert** für jedes Attribut einzeln, sodass beim nächsten Hinzufügen eines Features auf demselben Layer diese Attribute automatisch vorausgefüllt werden.
+
+::: callout-note
+Dieser letzte eingegebene Wert gilt nur beim Erfassen neuer Features, nicht beim Bearbeiten bestehender, sofern nicht anders angegeben.
+:::
+
+# Datenverwaltung {#sec-data-management}
+
+## Datenexport und Synchronisation {#sec-data-export}
+
+Nach Abschluss Ihrer Feldarbeit gibt es mehrere Möglichkeiten, die geänderten Dateien zurück an das Quellgerät zu senden und zu exportieren.
+
+### In Ordner exportieren
+
+Bei Auswahl der Aktion "In Ordner exportieren":
+1.  Sie werden gebeten, einen Speicherort auszuwählen, an den der Inhalt kopiert werden soll.
+2.  Sie können diese Aktion verwenden, um den Inhalt geänderter Projekte oder Datensätze in einen Ordner auf Ihrem Gerät zu kopieren, auf den Synchronisierungs-Apps von Drittanbietern wie Syncthing zugreifen können.
+3.  Sie können Inhalte auch direkt in Cloud-Konten von Anbietern kopieren, die den Scoped Storage-Verzeichnisanbieter von Android unterstützen (z. B. NextCloud).
+
+### Komprimierten Projektordner senden
+
+Die Aktion "Komprimierten Ordner senden an":
+1.  Komprimiert den Inhalt eines ausgewählten Ordners in ein ZIP-Archiv.
+2.  Sie werden gefragt, über welche App das resultierende ZIP-Archiv gesendet werden soll.
+
+Sie können ganze Projekte komprimieren und senden, indem Sie Stammordner im "Importierte Projekte"-Verzeichnis von QField auswählen, sowie selektive Ordner innerhalb von Projektordnern senden (zum Beispiel nur Ihre Fotos).
+
+::: {#fig-export-share layout-ncol="2"}
+![Die Option 'In Ordner exportieren'.](screemshots/Screenshot_20260127_105348.jpg)
+
+![Das Android-Teilen-Menü zum Senden des komprimierten Projekts.](screemshots/Screenshot_20260127_105359_IntentResolver.jpg)
+
+Exportieren und Teilen des Projekts aus QField.
+:::
+
+### Synchronisationsoptionen
+
+| Methode                   | Beschreibung                        |
+|---------------------------|-------------------------------------|
+| **Direkte Kabelübertragung** | Gerät an PC anschließen             |
+| **Cloud-Synchronisierung**| NextCloud, Google Drive, Syncthing  |
+| **E-Mail**                | Komprimiertes Projekt senden        |
+| **QFieldCloud**           | Cloud-basierter Synchronisationsdienst |
+
+# Anhänge {#sec-appendices}
+
+## Anhang A: Parameter für die Übersichtskartierung
+
+Ziel der Übersichtskartierung ist es, die dominanten Erosionsmerkmale im Feld zu erfassen und zu dokumentieren. Der Schwerpunkt liegt auf der Identifizierung von Erosionsereignissen und ihren Hauptmerkmalen und nicht auf einer detaillierten quantitativen Bewertung.
+
+Tabelle 1 fasst den empfohlenen Mindestdatensatz für die Übersichtskartierung von Erosion gemäß DWA-M 921 zusammen. Die Reihenfolge der Attribute in der Merkmalsdefinition oder im Datenkatalog entspricht der empfohlenen Reihenfolge der Datenerfassung im Feld.
+
+::: {#tbl-appendix-a}
++-------------+----------------------------------------------------------------------------+
+| Lfd. Nr.    | Attribut / Kartierobjekt                                                   |
++============:+============================================================================+
+| **0.**      | **Allgemeine Daten zur Kartierung**                                        |
++-------------+----------------------------------------------------------------------------+
+| 0.1         | Identifikator für die Kartierung / das kartierte Ereignis                  |
++-------------+----------------------------------------------------------------------------+
+| 0.2         | Kartierdatum                                                               |
++-------------+----------------------------------------------------------------------------+
+| 0.3         | Datum des Erosionsereignisses                                              |
++-------------+----------------------------------------------------------------------------+
+| 0.4         | Andauer des Erosionsereignisses                                            |
++-------------+----------------------------------------------------------------------------+
+| 0.5         | Nummer des Erosionssystems (Objekt-Identifikator)                          |
++-------------+----------------------------------------------------------------------------+
+| 0.6         | Flächen- / Feldblock-Identifikator                                         |
++-------------+----------------------------------------------------------------------------+
+| 0.7         | Fotos des Erosionssystems (Identifikationsnummer der Fotos)                |
++-------------+----------------------------------------------------------------------------+
+| 0.8.1       | Name der/des Kartierenden                                                  |
++-------------+----------------------------------------------------------------------------+
+| 0.8.2       | Institution / Dienststelle der/des Kartierenden                            |
++-------------+----------------------------------------------------------------------------+
+| **1.**      | **Flächennutzung, Bodenbearbeitung und Bewirtschaftung**                   |
++-------------+----------------------------------------------------------------------------+
+| 1.1         | Nutzungsart / Nutzungsform                                                 |
++-------------+----------------------------------------------------------------------------+
+| 1.2         | Angebaut(e) Fruchtart(en)                                                  |
++-------------+----------------------------------------------------------------------------+
+| 1.3         | Bearbeitungszustand der Ackerfläche                                        |
++-------------+----------------------------------------------------------------------------+
+| 1.5.3       | Bedeckung durch Pflanzen und Pflanzenreste (in %)                          |
++-------------+----------------------------------------------------------------------------+
+| **2.**      | **Abtrags- und Akkumulationsformen**                                       |
++-------------+----------------------------------------------------------------------------+
+| 2.1.1       | Flächenhafte Abtragsformen                                                 |
++-------------+----------------------------------------------------------------------------+
+| 2.1.2       | Lineare Abtragsformen                                                      |
++-------------+----------------------------------------------------------------------------+
+| 2.1.2.6     | Stärke des linearen Abtrags                                                |
++-------------+----------------------------------------------------------------------------+
+| 2.1.5.4     | Erosion in Mulden und Tiefenlinien                                         |
++-------------+----------------------------------------------------------------------------+
+| 2.2         | Akkumulationen                                                             |
++-------------+----------------------------------------------------------------------------+
+| **3.**      | **Übertritte von erodiertem Boden, flächenexterne Wirkungen („off-site“)** |
++-------------+----------------------------------------------------------------------------+
+| 3.1         | Übertrittsstellen                                                          |
++-------------+----------------------------------------------------------------------------+
+| **4.**      | **Oberflächenwasser, Fremdwasserzufluss und Wasseraustritt**               |
++-------------+----------------------------------------------------------------------------+
+| 4.1         | Fremdwasserzufluss (allgemein)                                             |
++-------------+----------------------------------------------------------------------------+
+| **5.**      | **Relief, Reliefmerkmale**                                                 |
++-------------+----------------------------------------------------------------------------+
+| 5.2         | Hangneigung im Bereich der Abtragsform                                     |
++-------------+----------------------------------------------------------------------------+
+
+: Anhang A: Erforderliche Parameter für die Übersichtskartierung von Erosion (DWA-M 921)
+:::
+
+Der Prozess der Übersichtskartierung besteht im Allgemeinen aus drei Schritten:
+1.  Das Untersuchungsgebiet wird bei einer Übersichtsbegehung inspiziert.
+    Dies kann von außerhalb des Feldes erfolgen, ohne die Feldparzelle zu betreten. Während der Begehung werden Erosionsmerkmale grob lokalisiert und die "Allgemeinen Daten zur Kartierung" (Pos. 0) sowie die "Daten zur Landnutzung, Bodenbearbeitung und Bewirtschaftung" (Pos. 1) erfasst und in die Feldkarte eingetragen.
+2.  Erosionsmerkmale werden in eine Feldkarte eingezeichnet.
+3.  Das Erosionssystem wird in der Feldkarte dokumentiert. Dies erfordert die Erfassung der Mindestdaten aus Tabelle 1 (Positionen 2 bis 5).
+
+## Anhang B: Parameter für die Detailkartierung
+
+Die Detailkartierung folgt demselben Arbeitsablauf wie die Übersichtskartierung (z.B. Feldinspektion, Vorbereitung von Feldkarten und Ausfüllen von Erhebungsformularen). Alle bei der Übersichtskartierung erfassten Parameter sind auch für die Detailkartierung **obligatorisch**. Der Hauptunterschied zwischen Übersichts- und Detailkartierung ist der höhere Detaillierungsgrad, insbesondere bei der genaueren Klassifizierung, Messung und Quantifizierung von Erosions- und Akkumulationsformen (*Abtrags- und Akkumulationsformen*). Die Detailkartierung erfordert den **vor-Ort-Zugang zu den kartierten Bereichen**, um eine genaue Digitalisierung und Attributüberprüfung direkt im Feld zu ermöglichen.
+Alle in Tabelle 2 aufgeführten Parameter müssen bei der Detailkartierung immer erfasst werden. Je nach Zielsetzung der Erhebung können bei Bedarf zusätzliche Parameter erhoben werden.
+
+::: {#tbl-appendix-b}
++-------------+----------------------------------------------------------------------------+
+| Lfd. Nr.    | Attribut / Kartierobjekt                                                   |
++=============+============================================================================+
+| **0.**      | **Allgemeine Daten zur Kartierung**                                        |
++-------------+----------------------------------------------------------------------------+
+| 0.1         | Identifikator für die Kartierung / das kartierte Ereignis                  |
++-------------+----------------------------------------------------------------------------+
+| 0.2         | Kartierdatum                                                               |
++-------------+----------------------------------------------------------------------------+
+| 0.3         | Datum des Erosionsereignisses                                              |
++-------------+----------------------------------------------------------------------------+
+| 0.4         | Andauer des Erosionsereignisses                                            |
++-------------+----------------------------------------------------------------------------+
+| 0.5         | Nummer des Erosionssystems (Objekt-Identifikator)                          |
++-------------+----------------------------------------------------------------------------+
+| 0.6         | Flächen- / Feldblock-Identifikator                                         |
++-------------+----------------------------------------------------------------------------+
+| 0.6.1       | Flächengröße der kartierten Parzelle (in ha)                               |
++-------------+----------------------------------------------------------------------------+
+| 0.8.1       | Name der/des Kartierenden                                                  |
++-------------+----------------------------------------------------------------------------+
+| 0.8.2       | Institution / Dienststelle der/des Kartierenden                            |
++-------------+----------------------------------------------------------------------------+
+| **1.**      | **Flächennutzung, Bodenbearbeitung und Bewirtschaftung**                   |
++-------------+----------------------------------------------------------------------------+
+| 1.1         | Nutzungsart / Nutzungsform                                                 |
++-------------+----------------------------------------------------------------------------+
+| 1.2         | Angebaut(e) Fruchtart(en)                                                  |
++-------------+----------------------------------------------------------------------------+
+| 1.3         | Bearbeitungszustand der Ackerfläche                                        |
++-------------+----------------------------------------------------------------------------+
+| 1.5.3       | Bedeckung durch Pflanzen und Pflanzenreste (in %)                          |
++-------------+----------------------------------------------------------------------------+
+| **2.**      | **Abtrags- und Akkumulationsformen**                                       |
++-------------+----------------------------------------------------------------------------+
+| 2.1.1       | Flächenhafte Abtragsformen                                                 |
++-------------+----------------------------------------------------------------------------+
+| 2.1.2       | Lineare Abtragsformen                                                      |
++-------------+----------------------------------------------------------------------------+
+| 2.1.3       | Flächenhaft lineare Abtragsformen                                          |
++-------------+----------------------------------------------------------------------------+
+| 2.1.4.1     | Anzahl linearer Erosionsformen                                             |
++-------------+----------------------------------------------------------------------------+
+| 2.1.4.2     | Mittlere Tiefe der Formen (in cm)                                          |
++-------------+----------------------------------------------------------------------------+
+| 2.1.4.3     | Mittlere Breite der Formen (in cm)                                         |
++-------------+----------------------------------------------------------------------------+
+| 2.1.4.4     | Querschnittsform der Formen                                                |
++-------------+----------------------------------------------------------------------------+
+| 2.1.4.5     | Mittlere Länge der Formen (in m)                                           |
++-------------+----------------------------------------------------------------------------+
+| 2.1.4.6     | Mittleres Abtragsvolumen der Einzelform (in m³)                            |
++-------------+----------------------------------------------------------------------------+
+| 2.1.4.7     | Ausgetragenes Bodenvolumen aller Formen (in m³)                            |
++-------------+----------------------------------------------------------------------------+
+| 2.1.5.2     | Lage der Erosionsformen innerhalb der betroffenen Fläche                   |
++-------------+----------------------------------------------------------------------------+
+| 2.1.5.3     | Größe der vom Bodenabtrag betroffenen Fläche (in m²)                       |
++-------------+----------------------------------------------------------------------------+
+| 2.1.5.4     | Erosion in Mulden und Tiefenlinien                                         |
++-------------+----------------------------------------------------------------------------+
+| 2.2.1       | Kleinflächige Akkumulation (Fläche < 20 m²) \|                            |
++-------------+----------------------------------------------------------------------------+
+| 2.2.2       | Großflächige Akkumulation (Fläche ≥ 20 m²)                                 |
++-------------+----------------------------------------------------------------------------+
+| 2.2.7.4     | Flächengröße der Akkumulation                                              |
++-------------+----------------------------------------------------------------------------+
+| **3.**      | **Übertritte von erodiertem Boden, flächenexterne Wirkungen („off-site“)** |
++-------------+----------------------------------------------------------------------------+
+| 3.1         | Übertrittsstellen                                                          |
++-------------+----------------------------------------------------------------------------+
+| **4.**      | **Oberflächenwasser, Fremdwasserzufluss und Wasseraustritt**               |
++-------------+----------------------------------------------------------------------------+
+| 4.1         | Fremdwasserzufluss (allgemein)                                             |
++-------------+----------------------------------------------------------------------------+
+| 4.2         | Wasseraustritt auf der von Bodenerosion betroffenen Fläche                 |
++-------------+----------------------------------------------------------------------------+
+| **5.**      | **Relief, Reliefmerkmale**                                                 |
++-------------+----------------------------------------------------------------------------+
+| 5.2         | Hangneigung im Bereich der Abtragsform                                     |
++-------------+----------------------------------------------------------------------------+
+
+: Anhang B: Erforderliche Parameter für die Detailkartierung von Erosion (DWA-M 921)
+:::
+
+## Anhang C: Zusätzliche Kartierungsparameter
+
+Zusätzliche Parameter für die Übersichts- und Detailkartierung von Erosion.
+
+::: {#tbl-appendix-c}
++-------------+----------------------------------------------------------------------------+
+| Lfd. Nr.    | Attribut / Kartierobjekt                                                   |
++=============+============================================================================+
+| **0.**      | **Allgemeine Daten zur Kartierung**                                        |
++-------------+----------------------------------------------------------------------------+
+| 0.8.3       | Gemeinde / Gemarkung, in der die Kartierung stattfindet                    |
++-------------+----------------------------------------------------------------------------+
+| 0.8.4       | Auftraggeber der Kartierung                                                |
++-------------+----------------------------------------------------------------------------+
+| 0.8.5       | Schadensmeldung durch Dritte                                               |
++-------------+----------------------------------------------------------------------------+
+| 0.8.6       | Bezug zu anderen Schadenskartierungen und Dokumentationsblättern           |
++-------------+----------------------------------------------------------------------------+
+| **1.**      | **Flächennutzung, Bodenbearbeitung und Bewirtschaftung**                   |
++-------------+----------------------------------------------------------------------------+
+| 1.3         | Bearbeitungszustand der Ackerfläche                                        |
++-------------+----------------------------------------------------------------------------+
+| 1.4.1       | Bearbeitungsrichtung Hauptfeld                                             |
++-------------+----------------------------------------------------------------------------+
+| 1.4.2       | Bearbeitungsrichtung Vorgewende                                            |
++-------------+----------------------------------------------------------------------------+
+| 1.5.1       | Verschlämmung der Bodenoberfläche                                          |
++-------------+----------------------------------------------------------------------------+
+| 1.5.2       | Steinbedeckung (in %)                                                      |
++-------------+----------------------------------------------------------------------------+
+| 1.5.4       | Phänologisches Entwicklungsstadium der Kulturpflanze                       |
++-------------+----------------------------------------------------------------------------+
+| 1.6         | Ackerbaulicher Erosionsschutz                                              |
++-------------+----------------------------------------------------------------------------+
+| **2.**      | **Abtrags- und Akkumulationsformen**                                       |
++-------------+----------------------------------------------------------------------------+
+| 2.1.5.1     | Wiederholter Abtrag an derselben Geländeposition                           |
++-------------+----------------------------------------------------------------------------+
+| 2.1.6       | Bioindikatoren für Erosionsprozesse                                        |
++-------------+----------------------------------------------------------------------------+
+| 2.2.7.1     | Wiederholte Akkumulation an derselben Geländeposition                      |
++-------------+----------------------------------------------------------------------------+
+| 2.2.7.2     | Akkumuliertes / deponiertes Bodenvolumen                                   |
++-------------+----------------------------------------------------------------------------+
+| 2.2.7.3     | Schäden an Kulturpflanzen durch Akkumulation                               |
++-------------+----------------------------------------------------------------------------+
+| **3.**      | **Übertritte von erodiertem Boden, flächenexterne Wirkungen („off-site“)** |
++-------------+----------------------------------------------------------------------------+
+| 3.2         | Stärke des Off-Site-Schadens                                               |
++-------------+----------------------------------------------------------------------------+
+| **4.**      | **Oberflächenwasser, Fremdwasserzufluss und Wasseraustritt**               |
++-------------+----------------------------------------------------------------------------+
+| 4.3         | Sonstige wasserhaushaltliche Merkmale                                      |
++-------------+----------------------------------------------------------------------------+
+| **5.**      | **Relief, Reliefmerkmale**                                                 |
++-------------+----------------------------------------------------------------------------+
+| 5.1         | Reliefgruppentyp                                                           |
++-------------+----------------------------------------------------------------------------+
+| 5.3.1       | Erosionswirksame Hanglänge bis zum Beginn der Akkumulation                 |
++-------------+----------------------------------------------------------------------------+
+| 5.3.2       | Hanglänge bis zum Beginn der Erosionsform / des Erosionssystems            |
++-------------+----------------------------------------------------------------------------+
+| 5.4         | Wölbungsform im Bereich der Erosionsform                                   |
++-------------+----------------------------------------------------------------------------+
+| 5.5         | Lage des Erosionssystems im Gelände                                        |
++-------------+----------------------------------------------------------------------------+
+| **6.**      | Sonstiger Erosionsschutz                                                   |
++-------------+----------------------------------------------------------------------------+
+| 6.1 – 6.6   | z .B. Gehölzflächen, Hecken, Wälle usw.                                  |
++-------------+----------------------------------------------------------------------------+
+
+: Anhang C: Zusätzliche Parameter für die Übersichts- und Detailkartierung von Erosion (DWA-M 921)
+:::
