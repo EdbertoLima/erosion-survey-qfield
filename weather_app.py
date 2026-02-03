@@ -314,6 +314,30 @@ def build_map(stations_meta, ei30_results=None):
         tooltip=f"{BUFFER_KM} km buffer",
     ).add_to(m)
 
+    # Draw the 25 km buffer circle
+    folium.Circle(
+        location=[CENTER_LAT, CENTER_LON],
+        radius=25 * 1000,
+        color="#3388ff",
+        fill=True,
+        fill_opacity=0.05,
+        weight=2,
+        dash_array="5",
+        tooltip=f"25 km buffer",
+    ).add_to(m)
+
+    # Draw the 10 km buffer circle
+    folium.Circle(
+        location=[CENTER_LAT, CENTER_LON],
+        radius=10 * 1000,
+        color="#3388ff",
+        fill=True,
+        fill_opacity=0.05,
+        weight=2,
+        dash_array="5",
+        tooltip=f"10 km buffer",
+    ).add_to(m)
+
     # Mark the center point
     folium.Marker(
         location=[CENTER_LAT, CENTER_LON],
