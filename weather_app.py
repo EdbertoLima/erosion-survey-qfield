@@ -111,6 +111,7 @@ def fetch_antecedent_rainfall(station_ids_tuple, window_hours=72):
     now = datetime.now(timezone.utc)
     window_start = now - timedelta(hours=window_hours)
     antecedent_start = window_start - timedelta(hours=120)
+    antecedent_start = antecedent_start.replace(minute=0, second=0, microsecond=0)
     start_str = antecedent_start.strftime("%Y-%m-%dT%H:%M")
     end_str = window_start.strftime("%Y-%m-%dT%H:%M")
 
