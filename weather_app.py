@@ -87,7 +87,8 @@ def fetch_rainfall_data(station_ids_tuple, hours=72, parameters="RR"):
     """Fetch historical TAWES data for given parameters and time window."""
     now = datetime.now(timezone.utc)
     start = now - timedelta(hours=hours)
-    start = start.replace(minute=0, second=0, microsecond=0)
+    # Round down to midnight (00:00) of that day
+    start = start.replace(hour=0, minute=0, second=0, microsecond=0)
     start_str = start.strftime("%Y-%m-%dT%H:%M") 
     end_str = now.strftime("%Y-%m-%dT%H:%M")
     ##inthour = now.replace(minute=0, second=0, microsecond=0)
@@ -110,8 +111,10 @@ def fetch_antecedent_rainfall(station_ids_tuple, window_hours=72):
     """Fetch 5-day (120h) antecedent rainfall ending at the start of the main window."""
     now = datetime.now(timezone.utc)
     window_start = now - timedelta(hours=window_hours)
+    # Round down to midnight (00:00) of that day
+    window_start = window_start.replace(hour=0, minute=0, second=0, microsecond=0)
     antecedent_start = window_start - timedelta(hours=120)
-    antecedent_start = antecedent_start.replace(minute=0, second=0, microsecond=0)
+    antecedent_start = antecedent_start.replace(hour=0, minute=0, second=0, microsecond=0)
     start_str = antecedent_start.strftime("%Y-%m-%dT%H:%M")
     end_str = window_start.strftime("%Y-%m-%dT%H:%M")
 
