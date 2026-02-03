@@ -312,7 +312,7 @@ def build_map(stations_meta, ei30_results=None):
     folium.Marker(
         location=[CENTER_LAT, CENTER_LON],
         icon=folium.Icon(color="blue", icon="crosshairs", prefix="fa"),
-        tooltip="Analysis center",
+        tooltip="Kaindorf",
     ).add_to(m)
 
     # Determine max rainfall for radius scaling
