@@ -13,8 +13,8 @@ import math
 API_BASE = "https://dataset.api.hub.geosphere.at/v1/station"
 
 # Central analysis point and buffer radius
-CENTER_LAT = 48.34335611029373
-CENTER_LON = 15.854961267324692
+CENTER_LAT = 47.22517226258929
+CENTER_LON = 15.911707948071635
 BUFFER_KM = 50
 
 
