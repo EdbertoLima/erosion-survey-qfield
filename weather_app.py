@@ -87,9 +87,11 @@ def fetch_rainfall_data(station_ids_tuple, hours=72, parameters="RR"):
     """Fetch historical TAWES data for given parameters and time window."""
     now = datetime.now(timezone.utc)
     start = now - timedelta(hours=hours)
-    start_str = start.strftime("%Y-%m-%dT%H:%M")
+    start = start.replace(minute=0, second=0, microsecond=0)
+    start_str = start.strftime("%Y-%m-%dT%H:%M") 
     end_str = now.strftime("%Y-%m-%dT%H:%M")
-
+    ##inthour = now.replace(minute=0, second=0, microsecond=0)
+    ##formatted = inthour.strftime("%Y-%m-%dT%H:%M")
     url = f"{API_BASE}/historical/tawes-v1-10min"
     params = {
         "parameters": parameters,
