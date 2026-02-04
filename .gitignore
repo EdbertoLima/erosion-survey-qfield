@@ -1,3 +1,4 @@
 __pycache__/
 .claude/
-lambda_function.pydata/raw/*.zip
+lambda_function.py
+data/raw/*.zip
