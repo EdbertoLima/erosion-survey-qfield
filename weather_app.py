@@ -848,8 +848,8 @@ def main():
 
     if source_cfg["api_type"] == "timeseries":
         st.info(
-            "INCA grid data: virtual stations created from hydrographic station locations "
-            "(messstellen_nlv.csv). I30 is approximated from hourly data and may underestimate "
+            "INCA grid data: Virtual stations created based on hydrographic station locations "
+            "(https://ehyd.gv.at/). I30 is approximated from hourly data and may underestimate "
             "sub-hourly peak intensities."
         )
 
