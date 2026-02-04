@@ -11,6 +11,9 @@ from pyproj import Transformer
 import math
 from io import BytesIO
 import base64
+from scipy.interpolate import Rbf
+from PIL import Image, ImageColor
+
 
 # ── API Configuration ──
 API_HOST = "https://dataset.api.hub.geosphere.at"
@@ -64,7 +67,6 @@ STORM_INTENSE_15MIN_MM = 6.0  # storms with >= this in ~15 min are included rega
 # Central analysis point and buffer radius
 CENTER_LAT = 47.22517226258929
 CENTER_LON = 15.911707948071635
-BUFFER_KM = 50
 
 CSV_PATH = "data/raw/messstellen_nlv.csv"
 
@@ -95,14 +97,6 @@ AGGREGATION_OPTIONS_HOURLY = {
     "3 hours": "3h",
     "6 hours": "6h",
     "24 hours": "24h",
-}
-
-TIME_RANGE_OPTIONS = {
-    "6 h": 6,
-    "12 h": 12,
-    "24 h": 24,
-    "48 h": 48,
-    "72 h": 72,
 }
 
 ALERT_THRESHOLDS = [
@@ -145,7 +139,7 @@ def build_api_url(api_type, mode, resource_id):
 # ── Station Metadata ──
 
 @st.cache_data(ttl=600)
-def load_csv_stations():
+def load_csv_stations(buffer_km):
     """Load virtual stations from CSV, convert EPSG:31287 → WGS84, filter by buffer."""
     df = pd.read_csv(CSV_PATH, sep=";", encoding="latin-1")
     stations = {}
@@ -157,7 +151,7 @@ def load_csv_stations():
             continue
         lon, lat = _transformer.transform(x, y)
         dist = haversine_km(CENTER_LAT, CENTER_LON, lat, lon)
-        if dist <= BUFFER_KM:
+        if dist <= buffer_km:
             sid = str(row["dbmsnr"])
             stations[sid] = {
                 "id": sid,
@@ -172,7 +166,7 @@ def load_csv_stations():
 
 
 @st.cache_data(ttl=600)
-def fetch_station_metadata_api(resource_id, api_type, mode_meta):
+def fetch_station_metadata_api(resource_id, api_type, mode_meta, buffer_km):
     """Fetch station metadata from API and filter by buffer distance."""
     url = build_api_url(api_type, mode_meta, resource_id) + "/metadata"
     resp = requests.get(url, timeout=30)
@@ -181,7 +175,7 @@ def fetch_station_metadata_api(resource_id, api_type, mode_meta):
     stations = {}
     for s in data.get("stations", []):
         dist = haversine_km(CENTER_LAT, CENTER_LON, s["lat"], s["lon"])
-        if dist <= BUFFER_KM:
+        if dist <= buffer_km:
             sid = str(s["id"])
             stations[sid] = {
                 "id": sid,
@@ -195,13 +189,13 @@ def fetch_station_metadata_api(resource_id, api_type, mode_meta):
     return stations
 
 
-def get_stations(source_name):
+def get_stations(source_name, buffer_km):
     """Get station metadata for the selected data source."""
     cfg = DATA_SOURCES[source_name]
     if cfg["api_type"] == "timeseries":
-        return load_csv_stations()
+        return load_csv_stations(buffer_km)
     return fetch_station_metadata_api(
-        cfg["resource_id"], cfg["api_type"], cfg["mode_meta"],
+        cfg["resource_id"], cfg["api_type"], cfg["mode_meta"], buffer_km
     )
 
 
@@ -246,13 +240,6 @@ def _fetch_inca_data(lat_lon_tuple, station_ids_tuple, start_str, end_str, param
         if i < len(station_ids_tuple):
             feature.setdefault("properties", {})["station"] = station_ids_tuple[i]
     return data
-
-
-def _time_window(hours):
-    """Return (start_str, end_str) for the main fetch window."""
-    now = datetime.now(timezone.utc)
-    start = (now - timedelta(hours=hours)).replace(hour=0, minute=0, second=0, microsecond=0)
-    return start.strftime("%Y-%m-%dT%H:%M"), now.strftime("%Y-%m-%dT%H:%M")
 
 
 def fetch_weather_data(source_name, station_ids, stations_meta, hours=None,
@@ -593,6 +580,83 @@ def compute_snowmelt_risk(df_context, stations_meta):
     return results
 
 
+def create_interpolation_heatmap(stations_meta, ei30_results, grid_resolution=100):
+    """
+    Create an IDW-like spatial interpolation heatmap of EI30 values.
+    Returns a base64 encoded PNG and the bounds for map overlay.
+    """
+    points = []
+    values = []
+    for sid, result in ei30_results.items():
+        if sid in stations_meta:
+            points.append([stations_meta[sid]['lon'], stations_meta[sid]['lat']])
+            values.append(result.get('EI30', 0.0))
+
+    if len(points) < 3:
+        return None, None  # Need at least 3 points for interpolation
+
+    points = np.array(points)
+    values = np.array(values)
+
+    # Define grid bounds based on station locations
+    lon_min, lat_min = points.min(axis=0)
+    lon_max, lat_max = points.max(axis=0)
+    
+    # Add a small buffer to the bounds
+    lon_buf = (lon_max - lon_min) * 0.1
+    lat_buf = (lat_max - lat_min) * 0.1
+    bounds = [[lat_min - lat_buf, lon_min - lon_buf], [lat_max + lat_buf, lon_max + lon_buf]]
+
+    # Create a grid: y (lat) descending, x (lon) ascending
+    grid_lat, grid_lon = np.mgrid[lat_max + lat_buf:lat_min - lat_buf:complex(0, grid_resolution), 
+                                  lon_min - lon_buf:lon_max + lon_buf:complex(0, grid_resolution)]
+
+    # RBF interpolation (x=lon, y=lat)
+    rbf = Rbf(points[:, 0], points[:, 1], values, function='linear')
+    interp_values = rbf(grid_lon, grid_lat)
+    
+    # Normalize values for coloring
+    vmin, vmax = np.nanmin(interp_values), np.nanmax(interp_values)
+    if vmax <= vmin:
+        vmax = vmin + 1.0
+    # Use np.nan_to_num to handle potential NaNs from interpolation
+    normalized_values = np.nan_to_num((interp_values - vmin) / (vmax - vmin))
+    
+    # Create an image from the interpolated data
+    img = Image.new('RGBA', (grid_resolution, grid_resolution))
+    pixels = img.load()
+    
+    # Colormap (e.g., from green to red)
+    cmap = [ImageColor.getrgb(c) for c in ['#2ecc71', '#f1c40f', '#e67e22', '#e74c3c']]
+    
+    for i in range(grid_resolution):  # Corresponds to x, or columns (lon)
+        for j in range(grid_resolution):  # Corresponds to y, or rows (lat)
+            val = normalized_values[j, i] # index as (row, col) -> (lat, lon)
+            
+            # Simple linear interpolation between colormap colors
+            idx = val * (len(cmap) - 1)
+            idx_floor = int(idx)
+            idx_ceil = min(idx_floor + 1, len(cmap) - 1)
+            
+            if idx_floor == idx_ceil:
+                color = cmap[idx_floor]
+            else:
+                interp = idx - idx_floor
+                color = tuple(int(c1 * (1 - interp) + c2 * interp) for c1, c2 in zip(cmap[idx_floor], cmap[idx_ceil]))
+
+            # Set opacity based on value (fade out low values)
+            opacity = int(255 * max(0, val - 0.1) / 0.9) if val > 0.1 else 0
+            pixels[i, j] = color + (opacity,)
+
+    # Convert image to base64 string
+    buffered = BytesIO()
+    img.save(buffered, format="PNG")
+    img_str = base64.b64encode(buffered.getvalue()).decode()
+    
+    return img_str, bounds
+
+
+
 def aggregate_rainfall(df, freq):
     """Aggregate rainfall data to the chosen frequency by summing."""
     if df.empty:
@@ -607,20 +671,43 @@ def aggregate_rainfall(df, freq):
 
 # ── Map ──
 
-def build_map(stations_meta, ei30_results=None):
+def build_map(stations_meta, ei30_results=None, heatmap_img=None, heatmap_bounds=None, buffer_km=25):
     """Build a folium map with CircleMarkers colored/sized by alert level."""
     if not stations_meta:
         return folium.Map(location=[47.5, 13.5], zoom_start=7)
 
     m = folium.Map(location=[CENTER_LAT, CENTER_LON], zoom_start=9)
 
-    for radius_km, label in [(BUFFER_KM, f"{BUFFER_KM} km buffer"), (25, "25 km buffer"), (10, "10 km buffer")]:
-        folium.Circle(
-            location=[CENTER_LAT, CENTER_LON],
-            radius=radius_km * 1000,
-            color="#3388ff", fill=True, fill_opacity=0.05, weight=2, dash_array="5",
-            tooltip=label,
-        ).add_to(m)
+    if heatmap_img and heatmap_bounds:
+        img_overlay = folium.raster_layers.ImageOverlay(
+            image=f"data:image/png;base64,{heatmap_img}",
+            bounds=heatmap_bounds,
+            opacity=0.6,
+            name="EI30 Heatmap",
+        )
+        img_overlay.add_to(m)
+        folium.LayerControl().add_to(m)
+
+    # Draw buffer circles
+    drawn_radii = []
+    # Draw the main, user-selected buffer first
+    folium.Circle(
+        location=[CENTER_LAT, CENTER_LON],
+        radius=buffer_km * 1000,
+        color="#e74c3c", fill=True, fill_opacity=0.05, weight=2, dash_array="5",
+        tooltip=f"{buffer_km} km buffer (selected)",
+    ).add_to(m)
+    drawn_radii.append(buffer_km)
+
+    # Draw other reference circles if they are different
+    for radius_km_ref, label in [(50, "50 km buffer"), (25, "25 km buffer"), (10, "10 km buffer")]:
+        if radius_km_ref not in drawn_radii:
+            folium.Circle(
+                location=[CENTER_LAT, CENTER_LON],
+                radius=radius_km_ref * 1000,
+                color="#3388ff", fill=True, fill_opacity=0.05, weight=1, dash_array="5",
+                tooltip=label,
+            ).add_to(m)
 
     folium.Marker(
         location=[CENTER_LAT, CENTER_LON],
@@ -687,13 +774,25 @@ def main():
     source_cfg = DATA_SOURCES[source_name]
     interval_minutes = source_cfg["interval_minutes"]
 
+    buffer_km = st.sidebar.slider("Buffer Radius (km)", 5, 100, 25)
+
+
     # Time range
-    time_label = st.sidebar.radio(
-        "Time range",
-        options=list(TIME_RANGE_OPTIONS.keys()),
-        index=4,  # default 72 h
-    )
-    time_hours = TIME_RANGE_OPTIONS[time_label]
+    st.sidebar.markdown("##### Custom Date Range")
+    today = datetime.now(timezone.utc)
+    default_start = today - timedelta(days=3)
+    
+    col1, col2 = st.sidebar.columns(2)
+    with col1:
+        start_date = st.date_input("Start date", value=default_start)
+    with col2:
+        end_date = st.date_input("End date", value=today)
+
+    # Convert to datetime objects for fetching
+    start_dt_utc = datetime.combine(start_date, datetime.min.time()).replace(tzinfo=timezone.utc)
+    end_dt_utc = datetime.combine(end_date, datetime.max.time()).replace(tzinfo=timezone.utc)
+    start_str = start_dt_utc.strftime("%Y-%m-%dT%H:%M")
+    end_str = end_dt_utc.strftime("%Y-%m-%dT%H:%M")
 
     # Aggregation (options depend on data resolution)
     agg_options = AGGREGATION_OPTIONS_HOURLY if interval_minutes >= 60 else AGGREGATION_OPTIONS_10MIN
@@ -719,10 +818,12 @@ def main():
         ),
     )
 
+    show_heatmap = st.sidebar.checkbox("Show EI30 Heatmap", value=False)
+
     # ── Station metadata ──
     with st.spinner("Loading station metadata..."):
         try:
-            stations_meta = get_stations(source_name)
+            stations_meta = get_stations(source_name, buffer_km)
         except Exception as e:
             st.error(f"Failed to load station metadata: {e}")
             return
@@ -742,7 +843,7 @@ def main():
         return
 
     st.caption(
-        f"Last {time_label} of precipitation from GeoSphere Austria \u2014 {source_cfg['description']}"
+        f"Precipitation from {start_date.strftime('%Y-%m-%d')} to {end_date.strftime('%Y-%m-%d')} from GeoSphere Austria \u2014 {source_cfg['description']}"
     )
 
     if source_cfg["api_type"] == "timeseries":
@@ -759,7 +860,7 @@ def main():
 
     with st.spinner("Fetching weather data..."):
         try:
-            geojson = fetch_weather_data(source_name, selected_station_ids, selected_meta, time_hours)
+            geojson = fetch_weather_data(source_name, selected_station_ids, selected_meta, start_str=start_str, end_str=end_str)
         except Exception as e:
             st.error(f"Failed to fetch weather data: {e}")
             return
@@ -784,7 +885,7 @@ def main():
     antecedent_totals = {}
     try:
         ant_geojson = fetch_antecedent_data(
-            source_name, selected_station_ids, selected_meta, time_hours,
+            source_name, selected_station_ids, selected_meta, window_start_dt=start_dt_utc,
         )
         antecedent_totals = compute_antecedent_totals(ant_geojson, selected_meta, param_map)
     except Exception:
@@ -876,16 +977,27 @@ def main():
             storm_df = storm_df.sort_values("EI30", ascending=False)
             st.dataframe(storm_df, use_container_width=True, hide_index=True)
 
+    # ── Interpolation Heatmap ──
+    heatmap_img, heatmap_bounds = None, None
+    if show_heatmap:
+        with st.spinner("Generating interpolation heatmap..."):
+            if len(selected_station_ids) < 3:
+                st.warning("Heatmap requires at least 3 stations with data to be selected.")
+            else:
+                heatmap_img, heatmap_bounds = create_interpolation_heatmap(selected_meta, ei30_results)
+                if not heatmap_img:
+                    st.warning("Could not generate heatmap. Not enough data or an error occurred during interpolation.")
+
     # ── Map ──
     st.subheader("Station Map")
-    station_map = build_map(selected_meta, ei30_results)
+    station_map = build_map(selected_meta, ei30_results, heatmap_img, heatmap_bounds, buffer_km)
     folium_static(station_map, width=900, height=450)
 
     # ── Aggregate for display ──
     df_agg = aggregate_rainfall(df_raw, agg_freq)
 
     # ── Time-series chart ──
-    st.subheader(f"Precipitation ({agg_label} totals, last {time_label})")
+    st.subheader(f"Precipitation ({agg_label} totals)")
     fig = px.bar(
         df_agg, x="timestamp", y="RR", color="station_name", barmode="group",
         labels={"RR": f"Rainfall ({agg_label}) [mm]", "timestamp": "Time"},
@@ -894,7 +1006,7 @@ def main():
     st.plotly_chart(fig, use_container_width=True)
 
     # ── Cumulative chart ──
-    st.subheader(f"Cumulative Precipitation ({time_label})")
+    st.subheader("Cumulative Precipitation")
     df_agg_sorted = df_agg.sort_values("timestamp")
     df_agg_sorted["cumulative"] = df_agg_sorted.groupby("station_name")["RR"].cumsum()
     fig_cum = px.line(
@@ -903,6 +1015,18 @@ def main():
     )
     fig_cum.update_layout(legend_title_text="Station", hovermode="x unified")
     st.plotly_chart(fig_cum, use_container_width=True)
+
+    # ── Hyetograph (Intensity Chart) ──
+    st.subheader("Rainfall Intensity (Hyetograph)")
+    # Use a copy to avoid Streamlit's "modified" warning
+    df_intensity = df_raw.copy()
+    df_intensity["intensity_mmh"] = df_intensity["RR"] * (60.0 / interval_minutes)
+    fig_hyeto = px.bar(
+        df_intensity, x="timestamp", y="intensity_mmh", color="station_name", barmode="group",
+        labels={"intensity_mmh": "Intensity [mm/h]", "timestamp": "Time"},
+    )
+    fig_hyeto.update_layout(legend_title_text="Station", hovermode="x unified")
+    st.plotly_chart(fig_hyeto, use_container_width=True)
 
     # ── Summary Table ──
     st.subheader("Summary Statistics")
@@ -913,6 +1037,7 @@ def main():
         name = selected_meta[sid]["name"]
         res = ei30_results.get(sid, {})
         ant = antecedent_totals.get(sid, 0.0)
+        amc_class, _ = classify_amc(ant)
         snow = snowmelt_results.get(sid, {})
         summary_rows.append({
             "Station": name,
@@ -923,6 +1048,7 @@ def main():
             "R sum": res.get("R_sum", 0.0),
             "Alert": res.get("alert_label", "No risk"),
             "Antecedent 5d (mm)": ant,
+            "AMC Class": amc_class,
             "Snowmelt risk": "Yes" if snow.get("snowmelt_risk") else "No",
             "Latest Temp (\u00b0C)": snow.get("latest_temp") if snow.get("latest_temp") is not None else "N/A",
             "Snow Depth (cm)": snow.get("latest_snow_depth") if snow.get("latest_snow_depth") is not None else "N/A",
@@ -942,9 +1068,13 @@ def main():
         for sid in selected_station_ids:
             if sid not in selected_meta:
                 continue
+            ant = antecedent_totals.get(sid, 0.0)
+            amc_class, amc_desc = classify_amc(ant)
             ant_rows.append({
                 "Station": selected_meta[sid]["name"],
-                "5-day Antecedent (mm)": antecedent_totals.get(sid, 0.0),
+                "5-day Antecedent (mm)": ant,
+                "AMC Class": amc_class,
+                "Description": amc_desc,
             })
         ant_df = pd.DataFrame(ant_rows)
         if not ant_df.empty:
