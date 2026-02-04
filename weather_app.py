@@ -1017,7 +1017,7 @@ def main():
     st.plotly_chart(fig_cum, use_container_width=True)
 
     # ── Hyetograph (Intensity Chart) ──
-    st.subheader("Rainfall Intensity (Hyetograph)")
+    st.subheader("Rainfall Intensity")
     # Use a copy to avoid Streamlit's "modified" warning
     df_intensity = df_raw.copy()
     df_intensity["intensity_mmh"] = df_intensity["RR"] * (60.0 / interval_minutes)
