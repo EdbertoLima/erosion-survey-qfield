@@ -766,8 +766,17 @@ def main():
 
     # ── Sidebar controls ──
     st.sidebar.header("Control Panel")
+    # Data source
+    source_name = st.sidebar.selectbox(
+        "Data Source",
+        options=list(DATA_SOURCES.keys()),
+        index=0,
+    )
+    source_cfg = DATA_SOURCES[source_name]
+    interval_minutes = source_cfg["interval_minutes"]
+    
 # Coordinate inputs
-    st.sidebar.markdown("Location:",
+    st.sidebar.markdown("##### Location:",
                         help=( "Default location: "
     "Kaindorf \n\n"
     "Lat: 47.2154074 "  
@@ -814,31 +823,77 @@ def main():
     if st.sidebar.button("Refresh Coords"):
         st.session_state.get_data_clicked = True
 
-    # Data source
-    source_name = st.sidebar.selectbox(
-        "Data Source",
-        options=list(DATA_SOURCES.keys()),
-        index=0,
-    )
-    source_cfg = DATA_SOURCES[source_name]
-    interval_minutes = source_cfg["interval_minutes"]
-
-    buffer_km = st.sidebar.slider("Buffer Radius (km)", 5, 100, 25)
+    buffer_km = st.sidebar.slider("##### Buffer Radius (km)", 5, 100, 25)
 
     # Time range
-    st.sidebar.markdown("##### Custom Date Range")
+    st.sidebar.markdown(
+        "##### Custom Date Range",
+        help=(
+            "**Limitations:**\n\n"
+            "- Start date must be before End date\n"
+            "- Maximum date range: 45 days\n"
+            "- End date cannot be in the future\n\n"
+            "Click 'Fetch Data' to load data for the selected range."
+        ),
+    )
     today = datetime.now(timezone.utc)
     default_start = today - timedelta(days=3)
-    
+
     col1, col2 = st.sidebar.columns(2)
     with col1:
         start_date = st.date_input("Start date", value=default_start)
     with col2:
         end_date = st.date_input("End date", value=today, max_value=today.date())
 
+    # Validate date range
+    date_range_valid = True
+    date_range_days = (end_date - start_date).days
+
+    if start_date >= end_date:
+        st.sidebar.error("Start date must be before End date.")
+        date_range_valid = False
+    elif date_range_days > 45:
+        st.sidebar.error(f"Date range exceeds 45 days ({date_range_days} days selected). Please select a shorter range.")
+        date_range_valid = False
+    
+
+
+    # Initialize session state for data fetching
+    if "data_loaded" not in st.session_state:
+        st.session_state.data_loaded = False
+    if "fetched_start_date" not in st.session_state:
+        st.session_state.fetched_start_date = None
+    if "fetched_end_date" not in st.session_state:
+        st.session_state.fetched_end_date = None
+
+    # On first visit, auto-load with default 72h range
+    is_first_load = not st.session_state.data_loaded
+    if is_first_load and date_range_valid:
+        st.session_state.data_loaded = True
+        st.session_state.fetched_start_date = start_date
+        st.session_state.fetched_end_date = end_date
+
+    # Check if user changed dates since last fetch
+    dates_changed = (
+        st.session_state.fetched_start_date != start_date or
+        st.session_state.fetched_end_date != end_date
+    )
+
+    # Fetch Data button
+    fetch_button_disabled = not date_range_valid
+    if st.sidebar.button("Fetch Data", disabled=fetch_button_disabled, type="primary"):
+        st.session_state.data_loaded = True
+        st.session_state.fetched_start_date = start_date
+        st.session_state.fetched_end_date = end_date
+        dates_changed = False  # Just clicked, so we're fetching current selection
+
+    # Use the fetched dates for data retrieval (not the current UI selection if changed)
+    fetch_start_date = st.session_state.fetched_start_date if st.session_state.fetched_start_date else start_date
+    fetch_end_date = st.session_state.fetched_end_date if st.session_state.fetched_end_date else end_date
+
     # Convert to datetime objects for fetching
-    start_dt_utc = datetime.combine(start_date, datetime.min.time()).replace(tzinfo=timezone.utc)
-    end_dt_utc = datetime.combine(end_date, datetime.max.time()).replace(tzinfo=timezone.utc)
+    start_dt_utc = datetime.combine(fetch_start_date, datetime.min.time()).replace(tzinfo=timezone.utc)
+    end_dt_utc = datetime.combine(fetch_end_date, datetime.max.time()).replace(tzinfo=timezone.utc)
 
     # Ensure end time is not in the future
     if end_dt_utc > today:
@@ -893,8 +948,30 @@ def main():
         st.info("Select at least one station in the sidebar.")
         return
 
+    # Build selected_meta early for map display
+    selected_meta = {
+        sid: stations_meta[sid] for sid in selected_station_ids if sid in stations_meta
+    }
+
+    # Check if data should be fetched
+    if not st.session_state.data_loaded:
+        st.info("Adjust the date range in the sidebar and click **Fetch Data** to load precipitation data.")
+        # Still show the map with station locations
+        st.subheader("Station Map")
+        station_map = build_map(selected_meta, st.session_state.selected_coords[0], st.session_state.selected_coords[1], None, None, None, buffer_km)
+        folium_static(station_map, width=900, height=450)
+        return
+
+    # Warn if dates changed since last fetch
+    if dates_changed:
+        st.warning(
+            f"Date range has changed. Currently showing data from "
+            f"**{st.session_state.fetched_start_date}** to **{st.session_state.fetched_end_date}**. "
+            f"Click **Fetch Data** to update."
+        )
+
     st.caption(
-        f"Precipitation from {start_date.strftime('%Y-%m-%dT%H:%M')} to {end_date.strftime('%Y-%m-%dT%H:%M')} from GeoSphere Austria \u2014 {source_cfg['description']}"
+        f"Precipitation from {fetch_start_date.strftime('%Y-%m-%d')} to {fetch_end_date.strftime('%Y-%m-%d')} from GeoSphere Austria \u2014 {source_cfg['description']}"
     )
 
     if source_cfg["api_type"] == "timeseries":
@@ -916,10 +993,6 @@ def main():
     """)
 
     # ── Fetch main data ──
-    selected_meta = {
-        sid: stations_meta[sid] for sid in selected_station_ids if sid in stations_meta
-    }
-
     with st.spinner("Fetching weather data..."):
         try:
             geojson = fetch_weather_data(source_name, selected_station_ids, selected_meta, start_str=start_str, end_str=end_str)
