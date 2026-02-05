@@ -100,7 +100,7 @@ AGGREGATION_OPTIONS_HOURLY = {
 }
 
 ALERT_THRESHOLDS = [
-    (400, "red", "High erosion risk", "#e74c3c"),
+    (200, "red", "High erosion risk", "#e74c3c"),
     (100, "orange", "Moderate erosion risk", "#e67e22"),
     (25, "yellow", "Low erosion risk", "#f1c40f"),
     (0, "green", "No risk", "#2ecc71"),
@@ -273,7 +273,7 @@ def fetch_antecedent_data(source_name, station_ids, stations_meta, window_hours=
     else:
         now = datetime.now(timezone.utc)
         window_start = (now - timedelta(hours=window_hours)).replace(
-            hour=0, minute=0, second=0, microsecond=0,
+            minute=0, second=0, microsecond=0,
         )
     ant_start = (window_start - timedelta(hours=120)).replace(
         hour=0, minute=0, second=0, microsecond=0,
@@ -812,9 +812,7 @@ def main():
             "**RUSLE2** (recommended): e = 0.29[1 - 0.72 exp(-0.082 i)], "
             "McGregor et al. (1995).\n\n"
             "**USLE**: e = 0.119 + 0.0873 log\u2081\u2080(i), capped at 0.283, "
-            "Wischmeier & Smith (1978).\n\n"
-            "The former RUSLE equation (b=0.05) is **not recommended** as it "
-            "underestimates erosivity by ~14% (Nearing et al., 2017)."
+            "Wischmeier & Smith (1978)."
         ),
     )
 

@@ -2,3 +2,7 @@ __pycache__/
 .claude/
 lambda_function.py
 data/raw/*.zip
+data/raw/aws/*
+data/lambda_deployment_package.zip
+.gitignore
+lambda_function.py
