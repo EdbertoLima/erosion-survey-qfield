@@ -841,7 +841,7 @@ def main():
         return
 
     st.caption(
-        f"Precipitation from {start_date.strftime('%Y-%m-%d')} to {end_date.strftime('%Y-%m-%d')} from GeoSphere Austria \u2014 {source_cfg['description']}"
+        f"Precipitation from {start_date.strftime('%Y-%m-%dT%H:%M')} to {end_date.strftime('%Y-%m-%dT%H:%M')} from GeoSphere Austria \u2014 {source_cfg['description']}"
     )
 
     if source_cfg["api_type"] == "timeseries":
