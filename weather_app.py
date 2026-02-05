@@ -273,7 +273,7 @@ def fetch_antecedent_data(source_name, station_ids, stations_meta, window_hours=
     else:
         now = datetime.now(timezone.utc)
         window_start = (now - timedelta(hours=window_hours)).replace(
-            minute=0, second=0, microsecond=0,
+            hour=0, minute=0, second=0, microsecond=0,
         )
     ant_start = (window_start - timedelta(hours=120)).replace(
         hour=0, minute=0, second=0, microsecond=0,
