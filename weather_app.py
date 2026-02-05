@@ -761,7 +761,7 @@ def build_map(stations_meta, ei30_results=None, heatmap_img=None, heatmap_bounds
 def main():
     st.set_page_config(page_title="Rainfall \u2013 Erosion Alert", layout="wide")
 
-    st.sidebar.image("assets/BAW Research Homepage.jpg")
+    st.sidebar.image("assets/BAW Research.png")
 
     st.title("Rainfall Erosivity Monitor \u2013 REM ")
 
@@ -826,17 +826,6 @@ def main():
 
     show_heatmap = st.sidebar.checkbox("Show EI30 Heatmap", value=False)
 
-    st.sidebar.divider()
-    st.sidebar.subheader("Contact")
-    st.sidebar.markdown("""
-    **BAW Research**
-
-    Pollnbergstraße 1  
-    3252 Petzenkirchen  
-    Telefon: `+43 7416 52108 859`  
-    E-Mail: [research@baw.at](mailto:research@baw.at)
-    """)
-
     # ── Station metadata ──
     with st.spinner("Loading station metadata..."):
         try:
@@ -869,6 +858,17 @@ def main():
             "(https://ehyd.gv.at/). I30 is approximated from hourly data and may underestimate "
             "sub-hourly peak intensities."
         )
+        
+    st.sidebar.divider()
+    st.sidebar.subheader("Contact")
+    st.sidebar.markdown("""
+    **BAW Research**
+
+    Pollnbergstraße 1  
+    3252 Petzenkirchen  
+    Telefon: `+43 7416 52108 859`  
+    E-Mail: [research@baw.at](mailto:research@baw.at)
+    """)
 
     # ── Fetch main data ──
     selected_meta = {
