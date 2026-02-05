@@ -786,7 +786,7 @@ def main():
     with col1:
         start_date = st.date_input("Start date", value=default_start)
     with col2:
-        end_date = st.date_input("End date", value=today)
+        end_date = st.date_input("End date", value=today, max_value=today.date())
 
     # Convert to datetime objects for fetching
     start_dt_utc = datetime.combine(start_date, datetime.min.time()).replace(tzinfo=timezone.utc)
