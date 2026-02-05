@@ -791,6 +791,11 @@ def main():
     # Convert to datetime objects for fetching
     start_dt_utc = datetime.combine(start_date, datetime.min.time()).replace(tzinfo=timezone.utc)
     end_dt_utc = datetime.combine(end_date, datetime.max.time()).replace(tzinfo=timezone.utc)
+
+    # Ensure end time is not in the future
+    if end_dt_utc > today:
+        end_dt_utc = today
+
     start_str = start_dt_utc.strftime("%Y-%m-%dT%H:%M")
     end_str = end_dt_utc.strftime("%Y-%m-%dT%H:%M")
 
