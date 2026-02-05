@@ -1,3 +1,4 @@
+# Forced reload comment
 import streamlit as st
 import requests
 import pandas as pd
@@ -64,9 +65,7 @@ STORM_GAP_RAIN_MM = 1.27   # max rainfall during gap to count as "dry"
 STORM_MIN_RAIN_MM = 12.7   # minimum total rain for an erosive storm
 STORM_INTENSE_15MIN_MM = 6.0  # storms with >= this in ~15 min are included regardless
 
-# Central analysis point and buffer radius
-CENTER_LAT = 47.22517226258929
-CENTER_LON = 15.911707948071635
+
 
 CSV_PATH = "data/raw/messstellen_nlv.csv"
 
@@ -139,7 +138,7 @@ def build_api_url(api_type, mode, resource_id):
 # ── Station Metadata ──
 
 @st.cache_data(ttl=600)
-def load_csv_stations(buffer_km):
+def load_csv_stations(buffer_km, center_lat, center_lon):
     """Load virtual stations from CSV, convert EPSG:31287 → WGS84, filter by buffer."""
     df = pd.read_csv(CSV_PATH, sep=";", encoding="latin-1")
     stations = {}
@@ -150,7 +149,7 @@ def load_csv_stations(buffer_km):
         except (ValueError, TypeError):
             continue
         lon, lat = _transformer.transform(x, y)
-        dist = haversine_km(CENTER_LAT, CENTER_LON, lat, lon)
+        dist = haversine_km(center_lat, center_lon, lat, lon)
         if dist <= buffer_km:
             sid = str(row["dbmsnr"])
             stations[sid] = {
@@ -166,7 +165,7 @@ def load_csv_stations(buffer_km):
 
 
 @st.cache_data(ttl=600)
-def fetch_station_metadata_api(resource_id, api_type, mode_meta, buffer_km):
+def fetch_station_metadata_api(resource_id, api_type, mode_meta, buffer_km, center_lat, center_lon):
     """Fetch station metadata from API and filter by buffer distance."""
     url = build_api_url(api_type, mode_meta, resource_id) + "/metadata"
     resp = requests.get(url, timeout=30)
@@ -174,7 +173,7 @@ def fetch_station_metadata_api(resource_id, api_type, mode_meta, buffer_km):
     data = resp.json()
     stations = {}
     for s in data.get("stations", []):
-        dist = haversine_km(CENTER_LAT, CENTER_LON, s["lat"], s["lon"])
+        dist = haversine_km(center_lat, center_lon, s["lat"], s["lon"])
         if dist <= buffer_km:
             sid = str(s["id"])
             stations[sid] = {
@@ -189,13 +188,13 @@ def fetch_station_metadata_api(resource_id, api_type, mode_meta, buffer_km):
     return stations
 
 
-def get_stations(source_name, buffer_km):
+def get_stations(source_name, buffer_km, center_lat, center_lon):
     """Get station metadata for the selected data source."""
     cfg = DATA_SOURCES[source_name]
     if cfg["api_type"] == "timeseries":
-        return load_csv_stations(buffer_km)
+        return load_csv_stations(buffer_km, center_lat, center_lon)
     return fetch_station_metadata_api(
-        cfg["resource_id"], cfg["api_type"], cfg["mode_meta"], buffer_km
+        cfg["resource_id"], cfg["api_type"], cfg["mode_meta"], buffer_km, center_lat, center_lon
     )
 
 
@@ -671,12 +670,12 @@ def aggregate_rainfall(df, freq):
 
 # ── Map ──
 
-def build_map(stations_meta, ei30_results=None, heatmap_img=None, heatmap_bounds=None, buffer_km=25):
+def build_map(stations_meta, center_lat, center_lon, ei30_results=None, heatmap_img=None, heatmap_bounds=None, buffer_km=25):
     """Build a folium map with CircleMarkers colored/sized by alert level."""
     if not stations_meta:
         return folium.Map(location=[47.5, 13.5], zoom_start=7)
 
-    m = folium.Map(location=[CENTER_LAT, CENTER_LON], zoom_start=9)
+    m = folium.Map(location=[center_lat, center_lon], zoom_start=9)
 
     if heatmap_img and heatmap_bounds:
         img_overlay = folium.raster_layers.ImageOverlay(
@@ -692,7 +691,7 @@ def build_map(stations_meta, ei30_results=None, heatmap_img=None, heatmap_bounds
     drawn_radii = []
     # Draw the main, user-selected buffer first
     folium.Circle(
-        location=[CENTER_LAT, CENTER_LON],
+        location=[center_lat, center_lon],
         radius=buffer_km * 1000,
         color="#e74c3c", fill=True, fill_opacity=0.05, weight=2, dash_array="5",
         tooltip=f"{buffer_km} km buffer (selected)",
@@ -703,14 +702,14 @@ def build_map(stations_meta, ei30_results=None, heatmap_img=None, heatmap_bounds
     for radius_km_ref, label in [(50, "50 km buffer"), (25, "25 km buffer"), (10, "10 km buffer")]:
         if radius_km_ref not in drawn_radii:
             folium.Circle(
-                location=[CENTER_LAT, CENTER_LON],
+                location=[center_lat, center_lon],
                 radius=radius_km_ref * 1000,
                 color="#3388ff", fill=True, fill_opacity=0.05, weight=1, dash_array="5",
                 tooltip=label,
             ).add_to(m)
 
     folium.Marker(
-        location=[CENTER_LAT, CENTER_LON],
+        location=[center_lat, center_lon],
         icon=folium.Icon(color="blue", icon="crosshairs", prefix="fa"),
         tooltip="Kaindorf",
     ).add_to(m)
@@ -766,7 +765,54 @@ def main():
     st.title("Rainfall Erosivity Monitor \u2013 REM ")
 
     # ── Sidebar controls ──
-    st.sidebar.header("Settings")
+    st.sidebar.header("Control Panel")
+# Coordinate inputs
+    st.sidebar.markdown("Location:",
+                        help=( "Default location: "
+    "Kaindorf \n\n"
+    "Lat: 47.2154074 "  
+    "Lon: 15.9018356"
+    
+                            ))
+    st.sidebar.write("Select your area of interest by entering coordinates below:")
+
+    # Define default coordinates using existing global constants
+    default_coords = [47.1965936, 15.8583828]
+
+    # Set defaults in session state
+    if "selected_coords" not in st.session_state:
+        st.session_state.selected_coords = default_coords
+    if "lat_input_val" not in st.session_state:
+        st.session_state.lat_input_val = str(st.session_state.selected_coords[0])
+    if "lon_input_val" not in st.session_state:
+        st.session_state.lon_input_val = str(st.session_state.selected_coords[1])
+
+    lat_input = st.sidebar.text_input("Latitude (-90 to 90)", value=st.session_state.lat_input_val, placeholder="e.g., 47.2154")
+    lon_input = st.sidebar.text_input("Longitude (-180 to 180)", value=st.session_state.lon_input_val, placeholder="e.g., 15.9018")
+
+    # Validate and update coordinates only if both inputs are valid floats or integers
+    try:
+        lat = float(lat_input.strip())
+        lon = float(lon_input.strip())
+        is_valid_number = True
+    except ValueError:
+        is_valid_number = False
+
+    if is_valid_number:
+        if -90 <= lat <= 90 and -180 <= lon <= 180:
+            if [lat, lon] != st.session_state.selected_coords:
+                st.session_state.selected_coords = [lat, lon]
+                st.session_state.lat_input_val = str(lat)
+                st.session_state.lon_input_val = str(lon)
+                st.sidebar.success(f"Map centered at: ({lat}, {lon})")
+        else:
+            st.sidebar.error("Latitude must be between -90 and 90, and longitude between -180 and 180.")
+    elif lat_input or lon_input:
+        st.sidebar.error("Please enter valid numeric values (float or integer only).")
+
+    # Get Data Button
+    if st.sidebar.button("Refresh Coords"):
+        st.session_state.get_data_clicked = True
 
     # Data source
     source_name = st.sidebar.selectbox(
@@ -778,7 +824,6 @@ def main():
     interval_minutes = source_cfg["interval_minutes"]
 
     buffer_km = st.sidebar.slider("Buffer Radius (km)", 5, 100, 25)
-
 
     # Time range
     st.sidebar.markdown("##### Custom Date Range")
@@ -829,7 +874,7 @@ def main():
     # ── Station metadata ──
     with st.spinner("Loading station metadata..."):
         try:
-            stations_meta = get_stations(source_name, buffer_km)
+            stations_meta = get_stations(source_name, buffer_km, st.session_state.selected_coords[0], st.session_state.selected_coords[1])
         except Exception as e:
             st.error(f"Failed to load station metadata: {e}")
             return
@@ -1007,7 +1052,7 @@ def main():
 
     # ── Map ──
     st.subheader("Station Map")
-    station_map = build_map(selected_meta, ei30_results, heatmap_img, heatmap_bounds, buffer_km)
+    station_map = build_map(selected_meta, st.session_state.selected_coords[0], st.session_state.selected_coords[1], ei30_results, heatmap_img, heatmap_bounds, buffer_km)
     folium_static(station_map, width=900, height=450)
 
     # ── Aggregate for display ──
