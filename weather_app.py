@@ -760,7 +760,10 @@ def build_map(stations_meta, ei30_results=None, heatmap_img=None, heatmap_bounds
 
 def main():
     st.set_page_config(page_title="Rainfall \u2013 Erosion Alert", layout="wide")
-    st.title("Rainfall Monitor \u2013 Erosion Alert")
+
+    st.sidebar.image("assets/BAW Research Homepage.jpg")
+
+    st.title("Rainfall Erosivity Monitor \u2013 REM ")
 
     # ── Sidebar controls ──
     st.sidebar.header("Settings")
@@ -822,6 +825,17 @@ def main():
     )
 
     show_heatmap = st.sidebar.checkbox("Show EI30 Heatmap", value=False)
+
+    st.sidebar.divider()
+    st.sidebar.subheader("Contact")
+    st.sidebar.markdown("""
+    **BAW Research**
+
+    Pollnbergstraße 1  
+    3252 Petzenkirchen  
+    Telefon: `+43 7416 52108 859`  
+    E-Mail: [research@baw.at](mailto:research@baw.at)
+    """)
 
     # ── Station metadata ──
     with st.spinner("Loading station metadata..."):
