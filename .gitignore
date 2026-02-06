@@ -1,8 +1,19 @@
+# Python
 __pycache__/
+*.py[cod]
+*$py.class
+.Python
+*.so
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Local settings
 .claude/
-lambda_function.py
-data/raw/*.zip
-data/raw/aws/*
-data/lambda_deployment_package.zip
-.gitignore
-lambda_function.py
