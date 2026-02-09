@@ -1,44 +1,36 @@
-cff-version: 1.2.0
-message: "If you use this manual, please cite it as below."
-
-title: "QField Manual: DWA-M-921 Erosion Survey"
-subtitle: "Field Guide for Soil Erosion Mapping"
-
+abstract: This manual provides an overview of the DWA-M 921 framework and serves as
+  a practical field guide for soil erosion mapping using QGIS and QField. It supports
+  the standardized recording of current erosion forms according to the DWA Ruleset.
 authors:
-  - name: "Edberto Moura Lima"
-    orcid: "https://orcid.org/0000-0002-8447-8460"
-    affiliation: "BAW Research"
-    email: "edberto.mouralima@baw.at"
-    roles:
-      - writing
-    corresponding: true
-
-  - name: "Gunther Liebhard"
-    affiliation: "BAW Research"
-    email: "gunther.liebhard@baw.at"
-
-  - name: "Thomas Brunner"
-    affiliation: "BAW-IKT"
-    email: "thomas.brunner@baw.at"
-
-  - name: "Peter Strauss"
-    affiliation: "BAW-IKT"
-    email: "peter.strauss@baw.at"
-
-abstract: >
-  This manual provides an overview of the DWA-M 921 framework and serves as a
-  practical field guide for soil erosion mapping using QGIS and QField. It
-  supports the standardized recording of current erosion forms according to
-  the DWA Ruleset.
-
+- affiliation: BAW Research
+  family-names: Edberto Moura Lima
+  orcid: 0000-0002-8447-8460
+- affiliation: BAW Research
+  family-names: Liebhard
+  given-names: Gunther
+  orcid: 0000-0002-3134-7387
+- affiliation: "Bundesamt f\xFCr Wasserwirtschaft"
+  family-names: Brunner
+  given-names: Thomas
+  orcid: 0000-0002-0402-219X
+- affiliation: TU Wien
+  family-names: Strauss
+  given-names: Peter
+  orcid: 0000-0002-8693-9304
+cff-version: 1.2.0
+date-released: '2026-02-09'
+doi: 10.5281/zenodo.18539062
 keywords:
-  - Soil erosion
-  - DWA-M 921
-  - QField
-  - QGIS
-  - Field survey
-  - Erosion mapping
-
-license: "GPL-3.0-or-later"
-
-repository-code: "https://github.com/EdbertoLima/BodenerosionKartieranleitung"
+- Soil erosion
+- DWA-M 921
+- QField
+- QGIS
+- Field survey
+- Erosion mapping
+license:
+- gpl-3.0-or-later
+message: If you use this software, please cite it using the metadata from this file.
+repository-code: https://github.com/EdbertoLima/erosion-survey-qfield/tree/v0.0.2
+title: 'QField Manual: DWA-M-921 Erosion Survey'
+type: software
+version: v0.0.2
