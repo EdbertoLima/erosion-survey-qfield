@@ -19,8 +19,8 @@ authors:
   given-names: Peter
   orcid: https://orcid.org/0000-0002-8693-9304
 cff-version: 1.2.0
-date-released: '2026-02-09'
-doi: 10.5281/zenodo.18539062
+date-released: '2026-11-09'
+doi: 10.5281/zenodo.18403752
 keywords:
 - Soil erosion
 - DWA-M 921
@@ -32,7 +32,7 @@ license:
 - CC-BY-4.0
 - GPL-3.0-or-later
 message: If you use this software, please cite it using the metadata from this file.
-repository-code: https://github.com/EdbertoLima/erosion-survey-qfield/tree/v0.0.2
+repository-code: https://github.com/EdbertoLima/erosion-survey-qfield/tree/v0.3.0
 title: 'QField Manual: DWA-M-921 Erosion Survey'
 type: software
-version: v0.0.2
+version: v0.3.0
