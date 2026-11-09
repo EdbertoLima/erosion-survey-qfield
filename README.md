@@ -62,7 +62,7 @@ If you use this manual or the associated project setup, please cite it as:
 
 > Moura Lima, E., Liebhard, G., Brunner, T., & Strauss, P. (2026).
 > *QField Manual: DWA-M-921 Erosion Survey – Field Guide for Soil Erosion Mapping*.
-> Zenodo. https://doi.org/10.5281/zenodo.18403753
+> Zenodo. https://doi.org/10.5281/zenodo.18403752
 
 A `CITATION.cff` file is provided to support automatic citation in GitHub and reference managers.
 
@@ -70,4 +70,7 @@ A `CITATION.cff` file is provided to support automatic citation in GitHub and re
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+- **Manual and documentation** (`docs/`, this README): [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) - you may share and adapt them for any purpose, with attribution.
+- **QGIS/QField project files** (`qfield-project/`): [GPL-3.0-or-later](https://www.gnu.org/licenses/gpl-3.0.html) - you may use and modify them; modified versions you distribute must also be released under the GPL.
+
+See [LICENSE](LICENSE) and the full texts in [LICENSES/](LICENSES/). Earlier releases keep the licence they were published with.

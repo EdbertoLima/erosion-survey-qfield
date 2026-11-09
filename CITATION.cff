@@ -5,19 +5,19 @@ authors:
 - affiliation: BAW Research
   family-names: Moura Lima
   given-names: Edberto
-  orcid: 0000-0002-8447-8460
+  orcid: https://orcid.org/0000-0002-8447-8460
 - affiliation: BAW Research
   family-names: Liebhard
   given-names: Gunther
-  orcid: 0000-0002-3134-7387
+  orcid: https://orcid.org/0000-0002-3134-7387
 - affiliation: "Bundesamt f\xFCr Wasserwirtschaft"
   family-names: Brunner
   given-names: Thomas
-  orcid: 0000-0002-0402-219X
+  orcid: https://orcid.org/0000-0002-0402-219X
 - affiliation: TU Wien
   family-names: Strauss
   given-names: Peter
-  orcid: 0000-0002-8693-9304
+  orcid: https://orcid.org/0000-0002-8693-9304
 cff-version: 1.2.0
 date-released: '2026-02-09'
 doi: 10.5281/zenodo.18539062
@@ -29,7 +29,8 @@ keywords:
 - Field survey
 - Erosion mapping
 license:
-- gpl-3.0-or-later
+- CC-BY-4.0
+- GPL-3.0-or-later
 message: If you use this software, please cite it using the metadata from this file.
 repository-code: https://github.com/EdbertoLima/erosion-survey-qfield/tree/v0.0.2
 title: 'QField Manual: DWA-M-921 Erosion Survey'
