@@ -28,9 +28,7 @@ keywords:
 - QGIS
 - Field survey
 - Erosion mapping
-license:
-- CC-BY-4.0
-- GPL-3.0-or-later
+license: CC-BY-4.0
 message: If you use this software, please cite it using the metadata from this file.
 repository-code: https://github.com/EdbertoLima/erosion-survey-qfield/tree/v0.3.0
 title: 'QField Manual: DWA-M-921 Erosion Survey'
