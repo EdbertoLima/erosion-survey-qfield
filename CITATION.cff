@@ -3,7 +3,8 @@ abstract: This manual provides an overview of the DWA-M 921 framework and serves
   the standardized recording of current erosion forms according to the DWA Ruleset.
 authors:
 - affiliation: BAW Research
-  family-names: Edberto Moura Lima
+  family-names: Moura Lima
+  given-names: Edberto
   orcid: 0000-0002-8447-8460
 - affiliation: BAW Research
   family-names: Liebhard
